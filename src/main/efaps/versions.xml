@@ -20,7 +20,7 @@
 
 <install xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <application>eFapsApp-Promotion</application>
+    <application>eFapsApp-Promotions</application>
     <dependencies>
         <dependency order="0">
             <groupId>org.efaps</groupId>
