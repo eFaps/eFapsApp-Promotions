@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+
+ Copyright 2003 - 2023 The eFaps Team
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+-->
+<ui-menu xmlns="http://www.efaps.org/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>20f9f6bf-f77a-4abb-b76c-024e0d74ca26</uuid>
+    <file-application>eFapsApp-Promotions</file-application>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Promo_MyDesk</name>
+         <target>
+            <trigger event="UI_ACCESSCHECK" method="configCheck" name="Promo_MyDesk.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                <!-- Promotions-Configuration -->
+                <property name="SystemConfig">e3055a0d-6b3d-4d44-88df-a3042400260b</property>
+                <property name="Attribute">org.efaps.promotions.Activate</property>
+            </trigger>
+        </target>
+    </definition>
+</ui-menu>

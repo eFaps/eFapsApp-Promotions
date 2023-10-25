@@ -22,6 +22,6 @@
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_Configuration</name>
+        <name>Promotions-Configuration</name>
     </definition>
 </common-systemconfiguration>
