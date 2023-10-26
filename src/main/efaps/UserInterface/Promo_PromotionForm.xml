@@ -36,9 +36,33 @@
             <property name="ModeSearch">EDITABLE</property>
             <property name="Attribute">Description</property>
         </field>
+         <field name="status">
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeSearch">EDITABLE</property>
+            <property name="Attribute">Status</property>
+        </field>
+        <field name="priority">
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeSearch">EDITABLE</property>
+            <property name="Attribute">Priority</property>
+        </field>
+        <field name="startDateTime">
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeSearch">EDITABLE</property>
+            <property name="Attribute">StartDateTime</property>
+        </field>
+        <field name="endDateTime">
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeSearch">EDITABLE</property>
+            <property name="Attribute">EndDateTime</property>
+        </field>
         <field character="Group" name="createGroup">
             <property name="GroupCount">2</property>
-             <property name="ModeEdit">NONE</property>
+            <property name="ModeEdit">NONE</property>
         </field>
         <field name="creator">
             <property name="SelectAlternateOID">linkto[Creator].oid</property>

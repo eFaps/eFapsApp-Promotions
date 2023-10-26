@@ -69,6 +69,24 @@
             <sqlcolumn>DESCR</sqlcolumn>
         </attribute>
         <attribute>
+            <name>Priority</name>
+            <type>Integer</type>
+            <sqltable>Promo_PromotionSQLTable</sqltable>
+            <sqlcolumn>PRIORITY</sqlcolumn>
+        </attribute>
+         <attribute>
+            <name>StartDateTime</name>
+            <type>DateTime</type>
+            <sqltable>Promo_PromotionSQLTable</sqltable>
+            <sqlcolumn>STARTDD</sqlcolumn>
+        </attribute>
+         <attribute>
+            <name>EndDateTime</name>
+            <type>DateTime</type>
+            <sqltable>Promo_PromotionSQLTable</sqltable>
+            <sqlcolumn>ENDDD</sqlcolumn>
+        </attribute>
+        <attribute>
             <name>Creator</name>
             <type>CreatorLink</type>
             <sqltable>Promo_PromotionSQLTable</sqltable>
