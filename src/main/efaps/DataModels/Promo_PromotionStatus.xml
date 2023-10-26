@@ -15,25 +15,20 @@
  limitations under the License.
 
 -->
-<ui-menu xmlns="http://www.efaps.org/xsd"
+<datamodel-statusgroup xmlns="http://www.efaps.org/xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>20f9f6bf-f77a-4abb-b76c-024e0d74ca26</uuid>
+    <uuid>88704dfa-3121-4138-a44e-9f0a3f19547e</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_MyDesk</name>
-        <target>
-            <trigger event="UI_ACCESSCHECK" method="configCheck"
-                name="Promo_MyDesk.UI_ACCESSCHECK"
-                program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Promotions-Configuration -->
-                <property name="SystemConfig">e3055a0d-6b3d-4d44-88df-a3042400260b</property>
-                <property name="Attribute">org.efaps.promotions.Activate</property>
-            </trigger>
-        </target>
-        <childs>
-            <child>Promo_PromotionMyDesk</child>
-        </childs>
+        <name>Promo_PromotionStatus</name>
+        <parent>Admin_DataModel_StatusAbstract</parent>
+        <status key="Active">
+            <description>Backend is active.</description>
+        </status>
+        <status key="Inactive">
+            <description>Backend is inactive.</description>
+        </status>
     </definition>
-</ui-menu>
+</datamodel-statusgroup>

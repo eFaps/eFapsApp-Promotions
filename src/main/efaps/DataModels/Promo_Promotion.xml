@@ -13,27 +13,23 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-
 -->
-<ui-menu xmlns="http://www.efaps.org/xsd"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>20f9f6bf-f77a-4abb-b76c-024e0d74ca26</uuid>
+    <uuid>cd9d7346-7d45-4ce1-8d00-4a0beff5ef02</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_MyDesk</name>
-        <target>
-            <trigger event="UI_ACCESSCHECK" method="configCheck"
-                name="Promo_MyDesk.UI_ACCESSCHECK"
-                program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <!-- Promotions-Configuration -->
-                <property name="SystemConfig">e3055a0d-6b3d-4d44-88df-a3042400260b</property>
-                <property name="Attribute">org.efaps.promotions.Activate</property>
+        <name>Promo_Promotion</name>
+        <parent>Promo_PromotionAbstract</parent>
+        <attribute>
+            <name>Status</name>
+            <type>Status</type>
+            <typelink>Promo_PromotionStatus</typelink>
+            <sqltable>Promo_PromotionSQLTable</sqltable>
+            <sqlcolumn>STATUS</sqlcolumn>
+            <trigger event="RANGE_VALUE" name="Promo_Promotion.Status.RANGE_VALUE" program="org.efaps.esjp.admin.datamodel.StatusValue">
             </trigger>
-        </target>
-        <childs>
-            <child>Promo_PromotionMyDesk</child>
-        </childs>
+        </attribute>
     </definition>
-</ui-menu>
+</datamodel-type>
