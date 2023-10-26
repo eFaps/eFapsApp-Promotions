@@ -27,6 +27,7 @@
             <property name="Select">type.label</property>
             <property name="Label">Promo_PromotionAbstract/Type.Label</property>
             <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
+            <property name="HRef">TREE</property>
         </field>
         <field name="name">
             <property name="Select">attribute[Name]</property>

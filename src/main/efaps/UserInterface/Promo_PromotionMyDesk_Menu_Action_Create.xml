@@ -15,21 +15,24 @@
     limitations under the License.
 
 -->
-<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-command xmlns="http://www.efaps.org/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>9b91dfaf-40eb-4b95-ba6b-9590ff8644a7</uuid>
+    <uuid>52ad527d-5161-4aa1-93ce-d409babb20fa</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_PromotionMyDesk</name>
+        <name>Promo_PromotionMyDesk_Menu_Action_Create</name>
         <target>
-            <menu>Promo_PromotionMyDesk_Menu</menu>
-            <table>Promo_PromotionTable</table>
-            <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="Type">Promo_PromotionAbstract</property>
-            </evaluate>
+            <form>Promo_PromotionForm</form>
+            <execute program="org.efaps.esjp.common.uiform.Create" >
+                <property name="StatusGroup">Promo_PromotionStatus</property>
+                <property name="Status">Inactive</property>
+            </execute>
         </target>
-        <property name="Target">content</property>
-        <property name="TargetShowCheckBoxes">true</property>
+        <property name="Target">modal</property>
+        <property name="TargetCreateType">Promo_Promotion</property>
+        <property name="TargetMode">create</property>
+        <property name="TargetDefaultMenu">none</property>
     </definition>
 </ui-command>
