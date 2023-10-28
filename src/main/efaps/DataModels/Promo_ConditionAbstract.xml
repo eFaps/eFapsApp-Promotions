@@ -49,6 +49,13 @@
             <sqlcolumn>PROMOID</sqlcolumn>
         </attribute>
         <attribute>
+            <name>ConditionContainer</name>
+            <type>Enum</type>
+            <className>org.efaps.esjp.promotions.utils.Promotions$ConditionContainer</className>
+            <sqltable>Promo_ConditionsSQLTable</sqltable>
+            <sqlcolumn>CONTAINER</sqlcolumn>
+        </attribute>
+        <attribute>
             <name>Creator</name>
             <type>CreatorLink</type>
             <sqltable>Promo_ConditionsSQLTable</sqltable>

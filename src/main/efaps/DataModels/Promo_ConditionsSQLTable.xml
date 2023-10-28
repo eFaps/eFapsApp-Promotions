@@ -25,12 +25,14 @@
         <typeid-column>TYPEID</typeid-column>
         <database>
             <table-name>T_PROMOCOND</table-name>
-            <column name="TYPEID"   not-null="true" type="INTEGER"/>
-            <column name="PROMOID"  not-null="true" type="INTEGER"/>
-            <column name="CREATOR"  not-null="true" type="INTEGER"/>
-            <column name="CREATED"  not-null="true" type="DATETIME"/>
-            <column name="MODIFIER" not-null="true" type="INTEGER"/>
-            <column name="MODIFIED" not-null="true" type="DATETIME"/>
+            <column name="TYPEID"       not-null="true" type="INTEGER"/>
+            <column name="PROMOID"      not-null="true" type="INTEGER"/>
+            <column name="CONTAINER"    not-null="true" type="INTEGER"/>
+            <column name="INT1"                         type="INTEGER"/>
+            <column name="CREATOR"      not-null="true" type="INTEGER"/>
+            <column name="CREATED"      not-null="true" type="DATETIME"/>
+            <column name="MODIFIER"     not-null="true" type="INTEGER"/>
+            <column name="MODIFIED"     not-null="true" type="DATETIME"/>
             <foreign key="PROMOID"  name="T_PROMOCOND_FK_PROMOID"    reference="T_PROMOPROMO(ID)"/>
             <foreign key="CREATOR"  name="T_PROMOCOND_FK_CRTR"       reference="T_USERPERSON(ID)"/>
             <foreign key="MODIFIER" name="T_PROMOCOND_FK_MDFR"       reference="T_USERPERSON(ID)"/>

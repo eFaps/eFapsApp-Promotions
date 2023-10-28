@@ -13,22 +13,21 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
+
 -->
-<datamodel-type xmlns="http://www.efaps.org/xsd"
+<ui-command xmlns="http://www.efaps.org/xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>bda07bf8-331c-4d39-a44b-8c98722b7f67</uuid>
+    <uuid>76ae482e-d02b-4427-ae7c-d245c5dd1a52</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_ProductsCondition</name>
-        <parent>Promo_ConditionAbstract</parent>
-        <attribute>
-            <name>EntryOperator</name>
-            <type>Enum</type>
-            <className>org.efaps.esjp.promotions.utils.Promotions$EntryOperator</className>
-            <sqltable>Promo_ConditionsSQLTable</sqltable>
-            <sqlcolumn>INT1</sqlcolumn>
-        </attribute>
+        <name>Promo_ProductsConditionTree_Menu_Action_Edit</name>
+        <target>
+            <form>Promo_ProductsConditionForm</form>
+            <execute program="org.efaps.esjp.common.uiform.Edit" />
+        </target>
+        <property name="Target">modal</property>
+        <property name="TargetMode">edit</property>
     </definition>
-</datamodel-type>
+</ui-command>

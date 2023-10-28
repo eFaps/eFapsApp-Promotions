@@ -13,22 +13,19 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
+
+
 -->
-<datamodel-type xmlns="http://www.efaps.org/xsd"
+<ui-menu xmlns="http://www.efaps.org/xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>bda07bf8-331c-4d39-a44b-8c98722b7f67</uuid>
+    <uuid>46afac21-622d-432f-8a53-2fe11aea484a</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_ProductsCondition</name>
-        <parent>Promo_ConditionAbstract</parent>
-        <attribute>
-            <name>EntryOperator</name>
-            <type>Enum</type>
-            <className>org.efaps.esjp.promotions.utils.Promotions$EntryOperator</className>
-            <sqltable>Promo_ConditionsSQLTable</sqltable>
-            <sqlcolumn>INT1</sqlcolumn>
-        </attribute>
+        <name>Promo_ProductsConditionTree_Menu_Action</name>
+        <childs>
+            <child>Promo_ProductsConditionTree_Menu_Action_Edit</child>
+        </childs>
     </definition>
-</datamodel-type>
+</ui-menu>

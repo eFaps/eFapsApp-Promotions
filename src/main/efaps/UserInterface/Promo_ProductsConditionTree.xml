@@ -15,22 +15,19 @@
   limitations under the License.
 
 -->
-<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-menu xmlns="http://www.efaps.org/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>62ca246d-d87f-43bb-920c-ba5ba6ac1a61</uuid>
+    <uuid>8f818449-6e85-49ee-8f02-ba3fc52112e1</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_PromotionTree</name>
+        <name>Promo_ProductsConditionTree</name>
         <target>
-            <menu>Promo_PromotionTree_Menu</menu>
-            <form>Promo_PromotionForm</form>
+            <menu>Promo_ProductsConditionTree_Menu</menu>
+            <form>Promo_ProductsConditionForm</form>
         </target>
-        <type>Promo_Promotion</type>
-        <childs>
-            <child>Promo_PromotionTree_Conditions</child>
-            <child>Promo_PromotionTree_Actions</child>
-        </childs>
+        <type>Promo_ProductsCondition</type>
         <property name="Target">content</property>
         <property name="TargetMode">view</property>
     </definition>
