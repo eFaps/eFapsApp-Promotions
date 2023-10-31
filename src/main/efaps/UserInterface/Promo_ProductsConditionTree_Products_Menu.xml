@@ -15,24 +15,16 @@
     limitations under the License.
 
 -->
-<ui-command xmlns="http://www.efaps.org/xsd"
+<ui-menu xmlns="http://www.efaps.org/xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>f95f4f63-ce40-4ed3-b533-1f50a4f518fd</uuid>
+    <uuid>990af9d3-7703-4f9d-9534-382392bdc4dd</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_PromotionTree_Actions</name>
-        <target>
-            <menu>Promo_PromotionTree_Actions_Menu</menu>
-            <table>Promo_ActionTable</table>
-            <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="LinkFrom">PromotionLink</property>
-                <property name="Type">Promo_ActionAbstract</property>
-            </evaluate>
-        </target>
-        <property name="Target">content</property>
-        <property name="TargetMode">view</property>
-        <property name="TargetShowCheckBoxes">true</property>
+        <name>Promo_ProductsConditionTree_Products_Menu</name>
+        <childs>
+            <child>Promo_ProductsConditionTree_Products_Menu_Action</child>
+        </childs>
     </definition>
-</ui-command>
+</ui-menu>

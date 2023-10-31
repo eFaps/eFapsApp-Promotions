@@ -18,17 +18,17 @@
 <ui-command xmlns="http://www.efaps.org/xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>f95f4f63-ce40-4ed3-b533-1f50a4f518fd</uuid>
+    <uuid>2f8c561d-d27d-433c-9f82-e34c94c49bff</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_PromotionTree_Actions</name>
+        <name>Promo_ProductsConditionTree_Products</name>
         <target>
-            <menu>Promo_PromotionTree_Actions_Menu</menu>
-            <table>Promo_ActionTable</table>
+            <menu>Promo_ProductsConditionTree_Products_Menu</menu>
+            <table>Promo_ProductsCondition2ProductTable</table>
             <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
-                <property name="LinkFrom">PromotionLink</property>
-                <property name="Type">Promo_ActionAbstract</property>
+                <property name="LinkFrom">FromLink</property>
+                <property name="Type">Promo_ProductsCondition2ProductAbstract</property>
             </evaluate>
         </target>
         <property name="Target">content</property>

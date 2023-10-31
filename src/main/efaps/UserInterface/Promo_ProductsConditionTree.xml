@@ -28,6 +28,9 @@
             <form>Promo_ProductsConditionForm</form>
         </target>
         <type>Promo_ProductsCondition</type>
+        <childs>
+            <child>Promo_ProductsConditionTree_Products</child>
+        </childs>
         <property name="Target">content</property>
         <property name="TargetMode">view</property>
     </definition>

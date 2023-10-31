@@ -19,7 +19,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>1506ffb2-7e36-4bab-8149-c692cc9ef986</uuid>
-    <file-application>eFapsApp-POS</file-application>
+    <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Promo_PromotionTree_Conditions_Menu_Action</name>
