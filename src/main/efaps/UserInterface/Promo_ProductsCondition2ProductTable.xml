@@ -33,5 +33,9 @@
             <property name="Select">linkto[ToLink].attribute[Name]</property>
             <property name="Label">Products_ProductAbstract/Name.Label</property>
         </field>
+        <field name="description">
+            <property name="Select">linkto[ToLink].attribute[Description]</property>
+            <property name="Label">Products_ProductAbstract/Description.Label</property>
+        </field>
     </definition>
 </ui-table>
