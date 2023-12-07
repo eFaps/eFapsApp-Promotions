@@ -25,12 +25,15 @@ import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
 import org.efaps.eql.EQL;
+import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.ci.CIPromo;
 import org.efaps.esjp.db.InstanceUtils;
 import org.efaps.esjp.promotions.utils.Promotions.ConditionContainer;
 import org.efaps.esjp.promotions.utils.Promotions.EntryOperator;
 import org.efaps.promotionengine.action.PercentageDiscountAction;
 import org.efaps.promotionengine.condition.ICondition;
+import org.efaps.promotionengine.condition.ProductFamilyCondition;
+import org.efaps.promotionengine.condition.ProductFamilyConditionEntry;
 import org.efaps.promotionengine.condition.ProductsCondition;
 import org.efaps.promotionengine.promotion.Promotion;
 import org.efaps.util.EFapsException;
@@ -117,11 +120,43 @@ public class PromotionService
                 }
                 condition = new ProductsCondition()
                                 .setEntryOperator(EnumUtils.getEnum(
-                                                                org.efaps.promotionengine.condition.EntryOperator.class,
-                                                                entryOperator.name()))
+                                                org.efaps.promotionengine.condition.EntryOperator.class,
+                                                entryOperator.name()))
                                 .setEntries(prodOids);
             }
+            if (InstanceUtils.isType(eval.inst(), CIPromo.ProductFamilyCondition)) {
+                final var ordinal = eval.<Integer>get(CIPromo.ConditionAbstract.Int1);
+                final var entryOperator = EntryOperator.values()[ordinal];
+                final var familyEval = EQL.builder().print().query(CIPromo.ProductFamilyCondition2ProductFamilyAbstract)
+                                .where()
+                                .attribute(CIPromo.ProductFamilyCondition2ProductFamilyAbstract.FromLink)
+                                .eq(eval.inst())
+                                .select()
+                                .linkto(CIPromo.ProductFamilyCondition2ProductFamilyAbstract.ToLink)
+                                .instance().as("familyInst")
+                                .evaluate();
+                final var entries = new ArrayList<ProductFamilyConditionEntry>();
+                while (familyEval.next()) {
+                    final Instance familyInst = familyEval.get("familyInst");
+                    final var entry = new ProductFamilyConditionEntry().setProductFamilyOid(familyInst.getOid());
+                    entries.add(entry);
+                    final var prodEval = EQL.builder().print().query(CIProducts.ProductAbstract)
+                        .where()
+                        .attribute(CIProducts.ProductAbstract.ProductFamilyLink).eq(familyInst)
+                        .select()
+                        .oid()
+                        .evaluate();
+                    while (prodEval.next()) {
+                        entry.addProduct(prodEval.inst().getOid());
+                    }
 
+                }
+                condition = new ProductFamilyCondition()
+                                .setEntryOperator(EnumUtils.getEnum(
+                                                org.efaps.promotionengine.condition.EntryOperator.class,
+                                                entryOperator.name()))
+                                .setEntries(entries);
+            }
             if (container.equals(ConditionContainer.SOURCE)) {
                 promotionBldr.addSourceCondition(condition);
             } else {

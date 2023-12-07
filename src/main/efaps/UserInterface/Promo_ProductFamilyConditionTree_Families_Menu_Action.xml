@@ -18,15 +18,16 @@
 <ui-menu xmlns="http://www.efaps.org/xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>1506ffb2-7e36-4bab-8149-c692cc9ef986</uuid>
+    <uuid>dfc66bd9-6859-4b76-b2ef-8092a86be601</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_PromotionTree_Conditions_Menu_Action</name>
+        <name>Promo_ProductFamilyConditionTree_Families_Menu_Action</name>
         <childs>
-            <child>Promo_PromotionTree_Conditions_Menu_Action_CreateProductsCondition</child>
-            <child>Promo_PromotionTree_Conditions_Menu_Action_CreateProductFamilyCondition</child>
-            <child>Promo_PromotionTree_Conditions_Menu_Action_Delete</child>
+            <child>
+                Promo_ProductFamilyConditionTree_Families_Menu_Action_AddExisting</child>
+            <child>
+                Promo_ProductFamilyConditionTree_Families_Menu_Action_Disconnect</child>
         </childs>
     </definition>
 </ui-menu>
