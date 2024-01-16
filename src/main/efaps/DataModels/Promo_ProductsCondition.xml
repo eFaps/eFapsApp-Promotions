@@ -30,5 +30,11 @@
             <sqltable>Promo_ConditionsSQLTable</sqltable>
             <sqlcolumn>INT1</sqlcolumn>
         </attribute>
+         <attribute>
+            <name>Quantity</name>
+            <type>Decimal</type>
+            <sqltable>Promo_ConditionsSQLTable</sqltable>
+            <sqlcolumn>DEC1</sqlcolumn>
+        </attribute>
     </definition>
 </datamodel-type>

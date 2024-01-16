@@ -102,7 +102,8 @@ public class PromotionService
                         .where()
                         .attribute(CIPromo.ConditionAbstract.PromotionLink).eq(promoInst)
                         .select()
-                        .attribute(CIPromo.ConditionAbstract.ConditionContainer, CIPromo.ConditionAbstract.Int1)
+                        .attribute(CIPromo.ConditionAbstract.ConditionContainer, CIPromo.ConditionAbstract.Int1,
+                                        CIPromo.ConditionAbstract.Decimal1)
                         .evaluate();
         while (eval.next()) {
             ICondition condition = null;
@@ -120,9 +121,11 @@ public class PromotionService
                     prodOids.add(prodEval.get("prodOid"));
                 }
                 condition = new ProductsCondition()
+                                .setPositionQuantity(eval.get(CIPromo.ConditionAbstract.Decimal1))
                                 .setEntryOperator(EnumUtils.getEnum(
                                                 org.efaps.promotionengine.condition.EntryOperator.class,
                                                 entryOperator.name()))
+
                                 .setEntries(prodOids);
             }
             if (InstanceUtils.isType(eval.inst(), CIPromo.ProductFamilyCondition)) {

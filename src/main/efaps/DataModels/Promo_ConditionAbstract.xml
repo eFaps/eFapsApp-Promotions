@@ -61,6 +61,12 @@
             <sqltable>Promo_ConditionsSQLTable</sqltable>
             <sqlcolumn>INT1</sqlcolumn>
         </attribute>
+         <attribute>
+            <name>Decimal1</name>
+            <type>Decimal</type>
+            <sqltable>Promo_ConditionsSQLTable</sqltable>
+            <sqlcolumn>DEC1</sqlcolumn>
+        </attribute>
         <attribute>
             <name>Creator</name>
             <type>CreatorLink</type>
