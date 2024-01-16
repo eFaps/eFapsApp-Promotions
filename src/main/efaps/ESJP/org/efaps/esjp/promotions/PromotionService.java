@@ -35,6 +35,7 @@ import org.efaps.promotionengine.condition.ICondition;
 import org.efaps.promotionengine.condition.ProductFamilyCondition;
 import org.efaps.promotionengine.condition.ProductFamilyConditionEntry;
 import org.efaps.promotionengine.condition.ProductsCondition;
+import org.efaps.promotionengine.condition.StoreCondition;
 import org.efaps.promotionengine.promotion.Promotion;
 import org.efaps.util.EFapsException;
 
@@ -141,11 +142,11 @@ public class PromotionService
                     final var entry = new ProductFamilyConditionEntry().setProductFamilyOid(familyInst.getOid());
                     entries.add(entry);
                     final var prodEval = EQL.builder().print().query(CIProducts.ProductAbstract)
-                        .where()
-                        .attribute(CIProducts.ProductAbstract.ProductFamilyLink).eq(familyInst)
-                        .select()
-                        .oid()
-                        .evaluate();
+                                    .where()
+                                    .attribute(CIProducts.ProductAbstract.ProductFamilyLink).eq(familyInst)
+                                    .select()
+                                    .oid()
+                                    .evaluate();
                     while (prodEval.next()) {
                         entry.addProduct(prodEval.inst().getOid());
                     }
@@ -157,6 +158,28 @@ public class PromotionService
                                                 entryOperator.name()))
                                 .setEntries(entries);
             }
+            if (InstanceUtils.isType(eval.inst(), CIPromo.StoreCondition)) {
+                final var ordinal = eval.<Integer>get(CIPromo.ConditionAbstract.Int1);
+                final var entryOperator = EntryOperator.values()[ordinal];
+                final var backendEval = EQL.builder().print().query(CIPromo.StoreCondition2POSBackend)
+                                .where()
+                                .attribute(CIPromo.StoreCondition2POSBackend.FromLink)
+                                .eq(eval.inst())
+                                .select()
+                                .linkto(CIPromo.StoreCondition2POSBackend.ToLink)
+                                .attribute("Identifier").as("backendIdentifier")
+                                .evaluate();
+
+                condition = new StoreCondition()
+                                .setEntryOperator(EnumUtils.getEnum(
+                                                org.efaps.promotionengine.condition.EntryOperator.class,
+                                                entryOperator.name()));
+                while (backendEval.next()) {
+                    final String backendIdentifier = backendEval.get("backendIdentifier");
+                    ((StoreCondition) condition).addIdentifier(backendIdentifier);
+                }
+            }
+
             if (container.equals(ConditionContainer.SOURCE)) {
                 promotionBldr.addSourceCondition(condition);
             } else {
