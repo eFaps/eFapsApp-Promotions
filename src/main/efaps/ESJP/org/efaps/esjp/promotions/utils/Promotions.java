@@ -19,7 +19,9 @@ package org.efaps.esjp.promotions.utils;
 import java.util.UUID;
 
 import org.efaps.admin.common.SystemConfiguration;
+import org.efaps.admin.datamodel.IBitEnum;
 import org.efaps.admin.datamodel.IEnum;
+import org.efaps.admin.datamodel.attributetype.BitEnumType;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.api.annotation.EFapsSysConfAttribute;
@@ -63,6 +65,24 @@ public class Promotions
 
         @Override
         public int getInt()
+        {
+            return ordinal();
+        }
+    }
+
+    public enum Weekday implements IBitEnum
+    {
+
+        MONDAY, TUESDAY, WDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY;
+
+        @Override
+        public int getInt()
+        {
+            return BitEnumType.getInt4Index(ordinal());
+        }
+
+        @Override
+        public int getBitIndex()
         {
             return ordinal();
         }
