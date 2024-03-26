@@ -22,7 +22,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.efaps.admin.datamodel.Type;
+import org.efaps.admin.datamodel.ui.IUIValue;
 import org.efaps.admin.event.Parameter;
+import org.efaps.admin.event.Parameter.ParameterValues;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsApplication;
@@ -61,6 +63,36 @@ public class EQLCondition
         return ret;
     }
 
+    public Return getAttributeDefinitionTypeFieldFormat(final Parameter parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final IUIValue value = (IUIValue) parameter.get(ParameterValues.UIOBJECT);
+        if (value.getObject() instanceof Long) {
+            final var type = Type.get((Long) value.getObject());
+            if (type != null) {
+                final var properties = Promotions.EQL_ATTRDEF.get();
+                final var types = PropertiesUtil.analyseProperty(properties, "Type", 0);
+                final var labels = PropertiesUtil.analyseProperty(properties, "Label", 0);
+                final var keyOpt = types
+                                .entrySet()
+                                .stream()
+                                .filter(entry -> entry.getValue().equals(type.getName())
+                                                || entry.getValue().equals(type.getUUID().toString()))
+                                .map(Map.Entry::getKey)
+                                .findFirst();
+                if (keyOpt.isPresent()) {
+                    ret.put(ReturnValues.VALUES, labels.get(keyOpt.get()));
+                } else {
+                    ret.put(ReturnValues.VALUES, type.getLabel());
+                }
+            } else {
+                ret.put(ReturnValues.VALUES, "");
+            }
+        }
+        return ret;
+    }
+
     public Return updateDropDown4AttributeDefinitionType(final Parameter parameter)
         throws EFapsException
     {
@@ -89,4 +121,28 @@ public class EQLCondition
         ret.put(ReturnValues.VALUES, values);
         return ret;
     }
+
+    public Return getAttributeDefinitionValueFieldFormat(final Parameter parameter)
+        throws EFapsException
+    {
+        final Return ret = new Return();
+        final IUIValue value = (IUIValue) parameter.get(ParameterValues.UIOBJECT);
+        if (value.getObject() instanceof Long) {
+            final var valueId = (Long) value.getObject();
+            final var eval = EQL.builder()
+                            .print()
+                            .query(CIERP.AttributeDefinitionAbstract)
+                            .where()
+                            .attribute(CIERP.AttributeDefinitionAbstract.ID).eq(valueId)
+                            .select()
+                            .attribute(CIERP.AttributeDefinitionAbstract.Value)
+                            .evaluate();
+            if (eval.next()) {
+                ret.put(ReturnValues.VALUES, eval.get(CIERP.AttributeDefinitionAbstract.Value));
+            }
+
+        }
+        return ret;
+    }
+
 }

@@ -58,6 +58,12 @@
             <sqlcolumn>CONTAINER</sqlcolumn>
         </attribute>
         <attribute>
+            <name>Note</name>
+            <type>String</type>
+            <sqltable>Promo_ConditionsSQLTable</sqltable>
+            <sqlcolumn>NOTE</sqlcolumn>
+        </attribute>
+        <attribute>
             <name>Int1</name>
             <type>Integer</type>
             <sqltable>Promo_ConditionsSQLTable</sqltable>

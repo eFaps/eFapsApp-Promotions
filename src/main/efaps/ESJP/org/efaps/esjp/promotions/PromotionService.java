@@ -114,8 +114,8 @@ public class PromotionService
                         .where()
                         .attribute(CIPromo.ConditionAbstract.PromotionLink).eq(promoInst)
                         .select()
-                        .attribute(CIPromo.ConditionAbstract.ConditionContainer, CIPromo.ConditionAbstract.Int1,
-                                        CIPromo.ConditionAbstract.Decimal1)
+                        .attribute(CIPromo.ConditionAbstract.ConditionContainer, CIPromo.ConditionAbstract.Note,
+                                        CIPromo.ConditionAbstract.Int1, CIPromo.ConditionAbstract.Decimal1)
                         .evaluate();
         while (eval.next()) {
             ICondition condition = null;
@@ -137,8 +137,8 @@ public class PromotionService
                                 .setEntryOperator(EnumUtils.getEnum(
                                                 org.efaps.promotionengine.condition.EntryOperator.class,
                                                 entryOperator.name()))
-
-                                .setEntries(prodOids);
+                                .setEntries(prodOids)
+                                .setNote(eval.get(CIPromo.ConditionAbstract.Note));
             }
             if (InstanceUtils.isType(eval.inst(), CIPromo.ProductFamilyCondition)) {
                 final var ordinal = eval.<Integer>get(CIPromo.ConditionAbstract.Int1);
@@ -171,7 +171,8 @@ public class PromotionService
                                 .setEntryOperator(EnumUtils.getEnum(
                                                 org.efaps.promotionengine.condition.EntryOperator.class,
                                                 entryOperator.name()))
-                                .setEntries(entries);
+                                .setEntries(entries)
+                                .setNote(eval.get(CIPromo.ConditionAbstract.Note));
             }
             if (InstanceUtils.isType(eval.inst(), CIPromo.StoreCondition)) {
                 final var ordinal = eval.<Integer>get(CIPromo.ConditionAbstract.Int1);
@@ -188,7 +189,8 @@ public class PromotionService
                 condition = new StoreCondition()
                                 .setEntryOperator(EnumUtils.getEnum(
                                                 org.efaps.promotionengine.condition.EntryOperator.class,
-                                                entryOperator.name()));
+                                                entryOperator.name()))
+                                .setNote(eval.get(CIPromo.ConditionAbstract.Note));
                 while (backendEval.next()) {
                     final String backendIdentifier = backendEval.get("backendIdentifier");
                     ((StoreCondition) condition).addIdentifier(backendIdentifier);
@@ -204,7 +206,8 @@ public class PromotionService
                                                 org.efaps.promotionengine.condition.EntryOperator.class,
                                                 entryOperator.name()))
 
-                                .setEntries(prodOids);
+                                .setEntries(prodOids)
+                                .setNote(eval.get(CIPromo.ConditionAbstract.Note));
             }
             if (container.equals(ConditionContainer.SOURCE)) {
                 promotionBldr.addSourceCondition(condition);
@@ -251,7 +254,13 @@ public class PromotionService
 
         if (!wheres.isEmpty()) {
             bldr.append(" where ");
+            boolean first = true;
             for (final var oneWhere : wheres.entrySet()) {
+                if (first) {
+                    first = false;
+                } else {
+                    bldr.append(" and ");
+                }
                 bldr.append(oneWhere.getKey()).append(" eq ").append(oneWhere.getValue());
             }
         }

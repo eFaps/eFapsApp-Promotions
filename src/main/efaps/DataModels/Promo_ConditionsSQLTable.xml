@@ -30,6 +30,7 @@
             <column name="TYPEID"       not-null="true" type="INTEGER"/>
             <column name="PROMOID"      not-null="true" type="INTEGER"/>
             <column name="CONTAINER"    not-null="true" type="INTEGER"/>
+            <column name="NOTE"                         type="STRING_SHORT" length="1024"/>
             <column name="INT1"                         type="INTEGER"/>
             <column name="DEC1"                         type="DECIMAL" length="8" scale="4"/>
             <column name="CREATOR"      not-null="true" type="INTEGER"/>
