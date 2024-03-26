@@ -44,15 +44,20 @@ import org.efaps.promotionengine.condition.ProductsCondition;
 import org.efaps.promotionengine.condition.StoreCondition;
 import org.efaps.promotionengine.promotion.Promotion;
 import org.efaps.util.EFapsException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @EFapsUUID("26c36418-2e96-4d89-87c4-ad3740bba939")
 @EFapsApplication("eFapsApp-Promotions")
 public class PromotionService
 {
+    private static final Logger LOG = LoggerFactory.getLogger(PromotionService.class);
 
     public List<Promotion> getPromotions()
         throws EFapsException
     {
+        LOG.debug("Getting Promotions");
+
         final var promotions = new ArrayList<Promotion>();
         final var promoEval = EQL.builder().print().query(CIPromo.PromotionAbstract)
                         .where()
@@ -104,6 +109,7 @@ public class PromotionService
                                final Promotion.Builder promotionBldr)
         throws EFapsException
     {
+        LOG.debug("Evaluation Conditions");
         final var eval = EQL.builder().print().query(CIPromo.ConditionAbstract)
                         .where()
                         .attribute(CIPromo.ConditionAbstract.PromotionLink).eq(promoInst)
@@ -211,6 +217,7 @@ public class PromotionService
     protected List<String> evalProductOids4EQL(final Instance conditionInstance)
         throws EFapsException
     {
+        LOG.debug("Evaluation ProductOid for EQL {}", conditionInstance.getOid());
         final var prodOids = new ArrayList<String>();
         final var properties = Promotions.EQL_ATTRDEF.get();
         final var types = PropertiesUtil.analyseProperty(properties, "Type", 0);
