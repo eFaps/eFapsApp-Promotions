@@ -52,7 +52,6 @@
             <property name="Label">Promo_EQLAttributeDefinitionForm.attributeDefinitionType.Label</property>
             <property name="ModeEdit">NONE</property>
             <property name="ModeView">READONLY</property>
-            <property name="UIType">INPUT</property>
             <trigger
                 program="org.efaps.esjp.promotions.EQLCondition"
                 method="getAttributeDefinitionTypeFieldFormat"
@@ -73,7 +72,6 @@
             <property name="Label">Promo_EQLAttributeDefinitionForm.attributeDefinitionValue.Label</property>
             <property name="ModeEdit">NONE</property>
             <property name="ModeView">READONLY</property>
-              <property name="UIType">INPUT</property>
             <trigger
                 program="org.efaps.esjp.promotions.EQLCondition"
                 method="getAttributeDefinitionValueFieldFormat"
