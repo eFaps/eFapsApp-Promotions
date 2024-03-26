@@ -1,0 +1,92 @@
+/*
+ * Copyright © 2003 - 2024 The eFaps Team (-)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.efaps.esjp.promotions;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.efaps.admin.datamodel.Type;
+import org.efaps.admin.event.Parameter;
+import org.efaps.admin.event.Return;
+import org.efaps.admin.event.Return.ReturnValues;
+import org.efaps.admin.program.esjp.EFapsApplication;
+import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.eql.EQL;
+import org.efaps.esjp.ci.CIERP;
+import org.efaps.esjp.common.properties.PropertiesUtil;
+import org.efaps.esjp.common.uiform.Field_Base.DropDownPosition;
+import org.efaps.esjp.promotions.utils.Promotions;
+import org.efaps.util.EFapsException;
+import org.efaps.util.UUIDUtil;
+
+@EFapsUUID("f3eb249e-5c4f-45fc-bfbd-46e72656e9ac")
+@EFapsApplication("eFapsApp-Promotions")
+public class EQLCondition
+{
+
+    public Return getAttributeDefinitionTypeOptionListFieldValue(final Parameter parameter)
+        throws EFapsException
+    {
+        final var ret = new Return();
+        final List<DropDownPosition> values = new ArrayList<>();
+        final var properties = Promotions.EQL_ATTRDEF.get();
+        final var types = PropertiesUtil.analyseProperty(properties, "Type", 0);
+        final var labels = PropertiesUtil.analyseProperty(properties, "Label", 0);
+        for (final var entry : types.entrySet()) {
+            Long typeId;
+            if (UUIDUtil.isUUID(entry.getValue())) {
+                typeId = Type.get(UUID.fromString(entry.getValue())).getId();
+            } else {
+                typeId = Type.get(entry.getValue()).getId();
+            }
+            values.add(new DropDownPosition(typeId, labels.get(entry.getKey())));
+        }
+        ret.put(ReturnValues.VALUES, values);
+        return ret;
+    }
+
+    public Return updateDropDown4AttributeDefinitionType(final Parameter parameter)
+        throws EFapsException
+    {
+        final var ret = new Return();
+        final var values = new ArrayList<Map<String, Object>>();
+        final var map = new HashMap<String, Object>();
+
+        final var attrDefType = parameter.getParameterValue("attributeDefinitionType");
+        final var type = Type.get(Long.valueOf(attrDefType));
+        final StringBuilder js = new StringBuilder()
+                        .append("new Array('").append(0).append("'");
+
+        final var eval = EQL.builder().print().query(type.getName())
+                        .select()
+                        .attribute(CIERP.AttributeDefinitionAbstract.Value)
+                        .evaluate();
+        while (eval.next()) {
+            js.append(",'").append(eval.inst().getId()).append("','")
+                            .append(eval.<String>get(CIERP.AttributeDefinitionAbstract.Value))
+                            .append("'");
+        }
+        js.append(")");
+        values.add(map);
+        map.put("attributeDefinitionValue", js.toString());
+
+        ret.put(ReturnValues.VALUES, values);
+        return ret;
+    }
+}

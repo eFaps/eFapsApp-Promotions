@@ -15,22 +15,18 @@
     limitations under the License.
 
 -->
-<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>20f2a01e-7f1c-4c73-abf3-4fb0d63f18fa</uuid>
+<ui-menu
+    xmlns="http://www.efaps.org/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd"
+>
+    <uuid>11c2dd16-05f8-440a-ad2e-f1fe8c46d620</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_ProductsEQLConditionTree</name>
-        <target>
-            <menu>Promo_ProductsEQLConditionTree_Menu</menu>
-            <form>Promo_ProductsEQLConditionForm</form>
-        </target>
-        <type>Promo_ProductsEQLCondition</type>
+        <name>Promo_ProductsEQLConditionTree_EQL_Menu</name>
         <childs>
-            <child>Promo_ProductsEQLConditionTree_EQL</child>
+            <child>Promo_ProductsEQLConditionTree_EQL_Menu_Action</child>
         </childs>
-        <property name="Target">content</property>
-        <property name="TargetMode">view</property>
     </definition>
 </ui-menu>

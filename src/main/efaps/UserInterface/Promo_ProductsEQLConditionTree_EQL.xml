@@ -15,22 +15,26 @@
     limitations under the License.
 
 -->
-<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>20f2a01e-7f1c-4c73-abf3-4fb0d63f18fa</uuid>
+<ui-command
+    xmlns="http://www.efaps.org/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd"
+>
+    <uuid>414f5fbc-a8b3-450a-88dc-ef07c15de706</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_ProductsEQLConditionTree</name>
+        <name>Promo_ProductsEQLConditionTree_EQL</name>
         <target>
-            <menu>Promo_ProductsEQLConditionTree_Menu</menu>
-            <form>Promo_ProductsEQLConditionForm</form>
+            <menu>Promo_ProductsEQLConditionTree_EQL_Menu</menu>
+            <table>Promo_EQLTable</table>
+            <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
+                <property name="LinkFrom">ConditionLink</property>
+                <property name="Type">Promo_EQLAbstract</property>
+            </evaluate>
         </target>
-        <type>Promo_ProductsEQLCondition</type>
-        <childs>
-            <child>Promo_ProductsEQLConditionTree_EQL</child>
-        </childs>
         <property name="Target">content</property>
         <property name="TargetMode">view</property>
+        <property name="TargetShowCheckBoxes">true</property>
     </definition>
-</ui-menu>
+</ui-command>

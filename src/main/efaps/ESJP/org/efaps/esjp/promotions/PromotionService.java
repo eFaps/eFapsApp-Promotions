@@ -17,16 +17,23 @@ package org.efaps.esjp.promotions;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.EnumUtils;
+import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
+import org.efaps.db.stmt.PrintStmt;
 import org.efaps.eql.EQL;
+import org.efaps.eql2.IPrintQueryStatement;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.ci.CIPromo;
+import org.efaps.esjp.common.properties.PropertiesUtil;
 import org.efaps.esjp.db.InstanceUtils;
+import org.efaps.esjp.promotions.utils.Promotions;
 import org.efaps.esjp.promotions.utils.Promotions.ConditionContainer;
 import org.efaps.esjp.promotions.utils.Promotions.EntryOperator;
 import org.efaps.promotionengine.action.PercentageDiscountAction;
@@ -181,12 +188,72 @@ public class PromotionService
                     ((StoreCondition) condition).addIdentifier(backendIdentifier);
                 }
             }
+            if (InstanceUtils.isType(eval.inst(), CIPromo.ProductsEQLCondition)) {
+                final var ordinal = eval.<Integer>get(CIPromo.ConditionAbstract.Int1);
+                final var entryOperator = EntryOperator.values()[ordinal];
+                final var prodOids = evalProductOids4EQL(eval.inst());
+                condition = new ProductsCondition()
+                                .setPositionQuantity(eval.get(CIPromo.ConditionAbstract.Decimal1))
+                                .setEntryOperator(EnumUtils.getEnum(
+                                                org.efaps.promotionengine.condition.EntryOperator.class,
+                                                entryOperator.name()))
 
+                                .setEntries(prodOids);
+            }
             if (container.equals(ConditionContainer.SOURCE)) {
                 promotionBldr.addSourceCondition(condition);
             } else {
                 promotionBldr.addTargetCondition(condition);
             }
         }
+    }
+
+    protected List<String> evalProductOids4EQL(final Instance conditionInstance)
+        throws EFapsException
+    {
+        final var prodOids = new ArrayList<String>();
+        final var properties = Promotions.EQL_ATTRDEF.get();
+        final var types = PropertiesUtil.analyseProperty(properties, "Type", 0);
+        final var selects = PropertiesUtil.analyseProperty(properties, "Select", 0);
+        final var eqlEval = EQL.builder().print()
+                        .query(CIPromo.EQLAttributeDefinition)
+                        .where()
+                        .attribute(CIPromo.EQLAttributeDefinition.ConditionLink).eq(conditionInstance)
+                        .select()
+                        .attribute(CIPromo.EQLAttributeDefinition.AttributeDefinitionType,
+                                        CIPromo.EQLAttributeDefinition.AttributeDefinitionValue)
+                        .evaluate();
+        final var wheres = new HashMap<String, Long>();
+        while (eqlEval.next()) {
+            final Long typeId = eqlEval.get(CIPromo.EQLAttributeDefinition.AttributeDefinitionType);
+            final Long valueId = eqlEval.get(CIPromo.EQLAttributeDefinition.AttributeDefinitionValue);
+            final var type = Type.get(typeId);
+            final var keyOpt = types
+                            .entrySet()
+                            .stream()
+                            .filter(entry -> entry.getValue().equals(type.getName())
+                                            || entry.getValue().equals(type.getUUID().toString()))
+                            .map(Map.Entry::getKey)
+                            .findFirst();
+            if (keyOpt.isPresent()) {
+                wheres.put(selects.get(keyOpt.get()), valueId);
+            }
+        }
+        final var bldr = new StringBuilder().append("print query type ")
+                        .append(CIProducts.ProductAbstract.getType().getName());
+
+        if (!wheres.isEmpty()) {
+            bldr.append(" where ");
+            for (final var oneWhere : wheres.entrySet()) {
+                bldr.append(oneWhere.getKey()).append(" eq ").append(oneWhere.getValue());
+            }
+        }
+        bldr.append(" select oid");
+        final IPrintQueryStatement stmt = (IPrintQueryStatement) EQL.parse(bldr);
+        final var eval = PrintStmt.get(stmt).evaluate();
+        while (eval.next()) {
+            prodOids.add(eval.inst().getOid());
+        }
+        return prodOids;
     }
 }

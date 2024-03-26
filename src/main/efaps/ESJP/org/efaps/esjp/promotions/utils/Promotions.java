@@ -26,6 +26,8 @@ import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.api.annotation.EFapsSysConfAttribute;
 import org.efaps.api.annotation.EFapsSystemConfiguration;
 import org.efaps.esjp.admin.common.systemconfiguration.BooleanSysConfAttribute;
+import org.efaps.esjp.admin.common.systemconfiguration.PropertiesSysConfAttribute;
+import org.efaps.esjp.ci.CIProducts;
 import org.efaps.util.cache.CacheReloadException;
 
 @EFapsUUID("73db3d9c-9d5d-49c2-a779-2b8b8e7ae707")
@@ -44,6 +46,15 @@ public class Promotions
                     .sysConfUUID(Promotions.SYSCONFUUID)
                     .key(Promotions.BASE + "Activate")
                     .description("Activate promotions.");
+
+    @EFapsSysConfAttribute
+    public static final PropertiesSysConfAttribute EQL_ATTRDEF = new PropertiesSysConfAttribute()
+                    .sysConfUUID(Promotions.SYSCONFUUID)
+                    .key(Promotions.BASE + "condition.eql.AttributeDefinition")
+                    .addDefaultValue("Type01", CIProducts.AttributeDefinitionBrand.uuid.toString())
+                    .addDefaultValue("Label01", "Brand")
+                    .addDefaultValue("Select01", "class[Products_ProductStandartClass].attribute[BrandLink]")
+                    .description("AttributeDefinition that can be used to filter");
 
     public enum ConditionContainer implements IEnum
     {
