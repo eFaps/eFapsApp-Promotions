@@ -224,7 +224,9 @@ public class PromotionService
         final var prodOids = new ArrayList<String>();
         final var properties = Promotions.EQL_ATTRDEF.get();
         final var types = PropertiesUtil.analyseProperty(properties, "Type", 0);
+        LOG.debug("  types: {}", types);
         final var selects = PropertiesUtil.analyseProperty(properties, "Select", 0);
+        LOG.debug("  selects: {}", selects);
         final var eqlEval = EQL.builder().print()
                         .query(CIPromo.EQLAttributeDefinition)
                         .where()
@@ -238,6 +240,7 @@ public class PromotionService
             final Long typeId = eqlEval.get(CIPromo.EQLAttributeDefinition.AttributeDefinitionType);
             final Long valueId = eqlEval.get(CIPromo.EQLAttributeDefinition.AttributeDefinitionValue);
             final var type = Type.get(typeId);
+            LOG.debug("  checking for type: {}", type);
             final var keyOpt = types
                             .entrySet()
                             .stream()
@@ -265,6 +268,7 @@ public class PromotionService
             }
         }
         bldr.append(" select oid");
+        LOG.debug("  stmt: {}", bldr);
         final IPrintQueryStatement stmt = (IPrintQueryStatement) EQL.parse(bldr);
         final var eval = PrintStmt.get(stmt).evaluate();
         while (eval.next()) {
