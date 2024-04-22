@@ -56,6 +56,13 @@ public class Promotions
                     .addDefaultValue("Select01", "class[Products_ProductStandartClass].attribute[BrandLink]")
                     .description("AttributeDefinition that can be used to filter");
 
+    @EFapsSysConfAttribute
+    public static final PropertiesSysConfAttribute ENGINE_CONFIG = new PropertiesSysConfAttribute()
+                    .sysConfUUID(Promotions.SYSCONFUUID)
+                    .key(Promotions.BASE + "engine.Config")
+                    .addDefaultValue("EngineRule", "PRIORITY")
+                    .description("EngineRule=PRIORITY|MOSTDISCOUNT");
+
     public enum ConditionContainer implements IEnum
     {
 
