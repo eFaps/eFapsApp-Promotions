@@ -59,7 +59,7 @@ public class Promotions
     @EFapsSysConfAttribute
     public static final PropertiesSysConfAttribute ENGINE_CONFIG = new PropertiesSysConfAttribute()
                     .sysConfUUID(Promotions.SYSCONFUUID)
-                    .key(Promotions.BASE + "engine.Config")
+                    .key(Promotions.BASE + "Engine.Config")
                     .addDefaultValue("EngineRule", "PRIORITY")
                     .description("EngineRule=PRIORITY|MOSTDISCOUNT");
 
