@@ -217,7 +217,7 @@ public class PromotionService
         }
     }
 
-    protected List<String> evalProductOids4EQL(final Instance conditionInstance)
+    public static List<String> evalProductOids4EQL(final Instance conditionInstance)
         throws EFapsException
     {
         LOG.debug("Evaluation ProductOid for EQL {}", conditionInstance.getOid());

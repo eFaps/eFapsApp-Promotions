@@ -15,23 +15,21 @@
     limitations under the License.
 
 -->
-<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>20f2a01e-7f1c-4c73-abf3-4fb0d63f18fa</uuid>
+<ui-command
+    xmlns="http://www.efaps.org/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd"
+>
+    <uuid>279e8967-2e07-446f-9577-d7d9d7f9935f</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_ProductsEQLConditionTree</name>
+        <name>Promo_ProductsEQLConditionTree_Preview</name>
         <target>
-            <menu>Promo_ProductsEQLConditionTree_Menu</menu>
-            <form>Promo_ProductsEQLConditionForm</form>
+            <table>Promo_ProductsEQLConditionPreviewTable</table>
+            <evaluate program="org.efaps.esjp.promotions.ui.ProductsEQLConditionPreviewProvider"/>
         </target>
-        <type>Promo_ProductsEQLCondition</type>
-        <childs>
-            <child>Promo_ProductsEQLConditionTree_EQL</child>
-            <child>Promo_ProductsEQLConditionTree_Preview</child>
-        </childs>
         <property name="Target">content</property>
         <property name="TargetMode">view</property>
     </definition>
-</ui-menu>
+</ui-command>
