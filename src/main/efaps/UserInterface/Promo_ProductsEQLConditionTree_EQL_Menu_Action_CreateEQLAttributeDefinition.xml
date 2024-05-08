@@ -27,7 +27,7 @@
         <name>Promo_ProductsEQLConditionTree_EQL_Menu_Action_CreateEQLAttributeDefinition</name>
         <target>
             <form>Promo_EQLAttributeDefinitionForm</form>
-            <execute program="org.efaps.esjp.common.uiform.Create"></execute>
+            <execute program="org.efaps.esjp.promotions.EQLCondition" method="create"></execute>
         </target>
         <property name="Target">modal</property>
         <property name="TargetCreateType">Promo_EQLAttributeDefinition</property>

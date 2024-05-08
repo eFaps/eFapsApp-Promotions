@@ -63,6 +63,12 @@
             <sqlcolumn>INT3</sqlcolumn>
         </attribute>
         <attribute>
+            <name>Str1</name>
+            <type>String</type>
+             <sqltable>Promo_ObjectSQLTable</sqltable>
+            <sqlcolumn>STR1</sqlcolumn>
+        </attribute>
+        <attribute>
             <name>Creator</name>
             <type>CreatorLink</type>
             <sqltable>Promo_ObjectSQLTable</sqltable>

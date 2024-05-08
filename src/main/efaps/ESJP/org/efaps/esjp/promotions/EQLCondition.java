@@ -29,9 +29,12 @@ import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.db.Instance;
 import org.efaps.eql.EQL;
 import org.efaps.esjp.ci.CIERP;
+import org.efaps.esjp.ci.CIPromo;
 import org.efaps.esjp.common.properties.PropertiesUtil;
+import org.efaps.esjp.common.uiform.Create;
 import org.efaps.esjp.common.uiform.Field_Base.DropDownPosition;
 import org.efaps.esjp.promotions.utils.Promotions;
 import org.efaps.util.EFapsException;
@@ -142,6 +145,56 @@ public class EQLCondition
             }
 
         }
+        return ret;
+    }
+
+    public Return create(final Parameter parameter)
+        throws EFapsException
+    {
+        final var ret = new Create().execute(parameter);
+        final Instance eqlAttributeDefinitionInst = (Instance) ret.get(ReturnValues.INSTANCE);
+
+        final var eval = EQL.builder()
+                        .print(eqlAttributeDefinitionInst)
+                        .attribute(CIPromo.EQLAttributeDefinition.AttributeDefinitionType,
+                                        CIPromo.EQLAttributeDefinition.AttributeDefinitionValue)
+                        .evaluate();
+        eval.next();
+        final Long typeId = eval.get(CIPromo.EQLAttributeDefinition.AttributeDefinitionType);
+        final Long valueId = eval.get(CIPromo.EQLAttributeDefinition.AttributeDefinitionValue);
+
+        final var type = Type.get(typeId);
+        final var properties = Promotions.EQL_ATTRDEF.get();
+        final var types = PropertiesUtil.analyseProperty(properties, "Type", 0);
+        final var labels = PropertiesUtil.analyseProperty(properties, "Label", 0);
+        final var keyOpt = types
+                        .entrySet()
+                        .stream()
+                        .filter(entry -> entry.getValue().equals(type.getName())
+                                        || entry.getValue().equals(type.getUUID().toString()))
+                        .map(Map.Entry::getKey)
+                        .findFirst();
+        String typeLabel;
+        if (keyOpt.isPresent()) {
+            typeLabel = labels.get(keyOpt.get());
+        } else {
+            typeLabel = type.getLabel();
+        }
+
+        final var eval2 = EQL.builder()
+                        .print()
+                        .query(CIERP.AttributeDefinitionAbstract)
+                        .where()
+                        .attribute(CIERP.AttributeDefinitionAbstract.ID).eq(valueId)
+                        .select()
+                        .attribute(CIERP.AttributeDefinitionAbstract.Value)
+                        .evaluate();
+        eval2.next();
+        final var value = eval2.get(CIERP.AttributeDefinitionAbstract.Value);
+        EQL.builder()
+                        .update(eqlAttributeDefinitionInst)
+                        .set(CIPromo.EQLAttributeDefinition.Description, String.format("%s == %s", typeLabel, value))
+                        .execute();
         return ret;
     }
 

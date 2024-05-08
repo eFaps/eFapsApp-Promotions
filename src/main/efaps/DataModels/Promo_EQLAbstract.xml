@@ -28,6 +28,12 @@
         <parent>Promo_ObjectAbstract</parent>
         <purpose abstract="true" />
         <attribute>
+            <name>Description</name>
+            <type>String</type>
+             <sqltable>Promo_ObjectSQLTable</sqltable>
+            <sqlcolumn>STR1</sqlcolumn>
+        </attribute>
+        <attribute>
             <name>ConditionLink</name>
             <type>Link</type>
             <typelink>Promo_ProductsEQLCondition</typelink>

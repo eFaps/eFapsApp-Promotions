@@ -30,6 +30,10 @@
             <property name="Label">Promo_PromotionAbstract/Type.Label</property>
             <property name="UIProvider">org.efaps.admin.datamodel.ui.StringUI</property>
         </field>
+        <field name="description">
+            <property name="Select">attribute[Description]</property>
+            <property name="Label">Promo_PromotionAbstract/Description.Label</property>
+        </field>
         <field name="creator">
             <property name="Select">attribute[Creator]</property>
             <property name="Label">Promo_PromotionAbstract/Creator.Label</property>

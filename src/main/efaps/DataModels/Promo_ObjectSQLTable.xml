@@ -15,7 +15,7 @@
     limitations under the License.
 
 -->
-<datamodel-sqltable xmlns="http://www.efaps.org/xsd" 
+<datamodel-sqltable xmlns="http://www.efaps.org/xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>cb99ff16-d231-4522-aa32-069a84d1573f</uuid>
     <file-application>eFapsApp-Promotions</file-application>
@@ -29,6 +29,7 @@
             <column name="INT1"                     type="INTEGER"/>
             <column name="INT2"                     type="INTEGER"/>
             <column name="INT3"                     type="INTEGER"/>
+            <column name="STR1"                     type="STRING_SHORT" length="512"/>
             <column name="CREATOR"  not-null="true" type="INTEGER"/>
             <column name="CREATED"  not-null="true" type="DATETIME"/>
             <column name="MODIFIER" not-null="true" type="INTEGER"/>
