@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
-import org.efaps.admin.ui.AbstractCommand;
+import org.efaps.admin.ui.AbstractUserInterfaceObject;
 import org.efaps.admin.ui.field.Field;
 import org.efaps.db.Instance;
 import org.efaps.eql.EQL;
@@ -41,7 +41,7 @@ public class ProductsEQLConditionPreviewProvider
 {
 
     @Override
-    public Collection<Map<String, ?>> getValues(final AbstractCommand cmd,
+    public Collection<Map<String, ?>> getValues(final AbstractUserInterfaceObject cmd,
                                                 final List<Field> fields,
                                                 final Map<String, String> properties,
                                                 final String oid)
