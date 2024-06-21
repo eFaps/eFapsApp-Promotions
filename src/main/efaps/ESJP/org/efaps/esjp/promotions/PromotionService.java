@@ -17,20 +17,25 @@ package org.efaps.esjp.promotions;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.ci.CIType;
 import org.efaps.db.Instance;
 import org.efaps.db.stmt.PrintStmt;
 import org.efaps.eql.EQL;
 import org.efaps.eql2.IPrintQueryStatement;
+import org.efaps.esjp.ci.CIPOS;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.ci.CIPromo;
+import org.efaps.esjp.ci.CISales;
 import org.efaps.esjp.common.properties.PropertiesUtil;
 import org.efaps.esjp.db.InstanceUtils;
 import org.efaps.esjp.promotions.utils.Promotions;
@@ -42,15 +47,22 @@ import org.efaps.promotionengine.condition.ProductFamilyCondition;
 import org.efaps.promotionengine.condition.ProductFamilyConditionEntry;
 import org.efaps.promotionengine.condition.ProductsCondition;
 import org.efaps.promotionengine.condition.StoreCondition;
+import org.efaps.promotionengine.dto.PromotionInfoDto;
 import org.efaps.promotionengine.promotion.Promotion;
 import org.efaps.util.EFapsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 @EFapsUUID("26c36418-2e96-4d89-87c4-ad3740bba939")
 @EFapsApplication("eFapsApp-Promotions")
 public class PromotionService
 {
+
     private static final Logger LOG = LoggerFactory.getLogger(PromotionService.class);
 
     public List<Promotion> getPromotions()
@@ -65,14 +77,15 @@ public class PromotionService
                         .eq(CIPromo.PromotionStatus.Active)
                         .select()
                         .attribute(CIPromo.PromotionAbstract.Name, CIPromo.PromotionAbstract.Description,
-                                        CIPromo.PromotionAbstract.Priority, CIPromo.PromotionAbstract.StartDateTime,
-                                        CIPromo.PromotionAbstract.EndDateTime)
+                                        CIPromo.PromotionAbstract.Label, CIPromo.PromotionAbstract.Priority,
+                                        CIPromo.PromotionAbstract.StartDateTime, CIPromo.PromotionAbstract.EndDateTime)
                         .evaluate();
         while (promoEval.next()) {
             final var promotionBldr = Promotion.builder()
                             .withOid(promoEval.inst().getOid())
                             .withName(promoEval.get(CIPromo.PromotionAbstract.Name))
                             .withDescription(promoEval.get(CIPromo.PromotionAbstract.Description))
+                            .withLabel(promoEval.get(CIPromo.PromotionAbstract.Label))
                             .withPriority(promoEval.get(CIPromo.PromotionAbstract.Priority))
                             .withStartDateTime(promoEval.get(CIPromo.PromotionAbstract.StartDateTime))
                             .withEndDateTime(promoEval.get(CIPromo.PromotionAbstract.EndDateTime));
@@ -215,6 +228,67 @@ public class PromotionService
                 promotionBldr.addTargetCondition(condition);
             }
         }
+    }
+
+    public Instance registerPromotionInfoForDoc(final String documentOid,
+                                                final PromotionInfoDto dto,
+                                                final Collection<String> promotions)
+        throws EFapsException
+    {
+        Instance ret = null;
+        final var docInst = Instance.get(documentOid);
+
+        CIType ciType = null;
+        if (InstanceUtils.isType(docInst, CISales.Receipt)) {
+            ciType = CIPromo.Promotion2Receipt;
+        } else if (InstanceUtils.isType(docInst, CISales.Invoice)) {
+            ciType = CIPromo.Promotion2Invoice;
+        } else if (InstanceUtils.isType(docInst, CIPOS.Order)) {
+            ciType = CIPromo.Promotion2Order;
+        } else if (InstanceUtils.isType(docInst, CIPOS.Ticket)) {
+            ciType = CIPromo.Promotion2Ticket;
+        }
+        if (ciType != null) {
+            try {
+                final var objectMapper = getObjectMapper();
+                final var oid2promotion = new HashMap<String, Promotion>();
+                for (final var promotionStr : promotions) {
+                    final var promotion = objectMapper.readValue(promotionStr, Promotion.class);
+                    LOG.info("Read promotion: {}", promotion);
+                    oid2promotion.put(promotion.getOid(), promotion);
+                }
+
+                for (final var promotionOid : dto.getPromotionOids()) {
+                    final var promoInst = Instance.get(promotionOid);
+                    if (InstanceUtils.isKindOf(promoInst, CIPromo.PromotionAbstract)) {
+                        final var promoInfo = objectMapper.writeValueAsString(dto);
+                        final String promotion;
+                        if (oid2promotion.containsKey(promotionOid)) {
+                            promotion = objectMapper.writeValueAsString(oid2promotion.get(promotionOid));
+                        } else {
+                            promotion = promotions.stream().collect(Collectors.joining("\n"));
+                        }
+                        ret = EQL.builder().insert(ciType)
+                                        .set(CIPromo.Promotion2DocumentAbstract.FromLink, promoInst)
+                                        .set(CIPromo.Promotion2DocumentAbstract.ToLinkAbstract, docInst)
+                                        .set(CIPromo.Promotion2DocumentAbstract.PromoInfo, promoInfo)
+                                        .set(CIPromo.Promotion2DocumentAbstract.Promotion, promotion)
+                                        .execute();
+                    }
+                }
+            } catch (final JsonProcessingException e) {
+                LOG.error("Catched", e);
+            }
+        }
+        return ret;
+    }
+
+    protected ObjectMapper getObjectMapper()
+    {
+        final var mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        return mapper;
     }
 
     public static List<String> evalProductOids4EQL(final Instance conditionInstance)

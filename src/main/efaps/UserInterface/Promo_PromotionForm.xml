@@ -38,6 +38,12 @@
             <property name="ModeSearch">EDITABLE</property>
             <property name="Attribute">Description</property>
         </field>
+        <field name="label">
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="ModeSearch">EDITABLE</property>
+            <property name="Attribute">Label</property>
+        </field>
          <field name="status">
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
