@@ -51,6 +51,12 @@
             <sqlcolumn>PROMOID</sqlcolumn>
         </attribute>
         <attribute>
+            <name>Decimal1</name>
+            <type>Decimal</type>
+            <sqltable>Promo_ActionsSQLTable</sqltable>
+            <sqlcolumn>DEC1</sqlcolumn>
+        </attribute>
+        <attribute>
             <name>Creator</name>
             <type>CreatorLink</type>
             <sqltable>Promo_ActionsSQLTable</sqltable>

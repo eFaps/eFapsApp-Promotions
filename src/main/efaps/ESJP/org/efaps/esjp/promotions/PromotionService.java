@@ -104,14 +104,11 @@ public class PromotionService
                         .where()
                         .attribute(CIPromo.ActionAbstract.PromotionLink).eq(promoInst)
                         .select()
-                        .attribute(CIPromo.ActionAbstract.ID)
+                        .attribute(CIPromo.ActionAbstract.ID, CIPromo.ActionAbstract.Decimal1)
                         .evaluate();
         while (eval.next()) {
             if (InstanceUtils.isType(eval.inst(), CIPromo.PercentageDiscountAction)) {
-                final var pEval = EQL.builder().print(eval.inst())
-                                .attribute(CIPromo.PercentageDiscountAction.Percentage)
-                                .evaluate();
-                final var percentage = pEval.<BigDecimal>get(CIPromo.PercentageDiscountAction.Percentage);
+                final var percentage = eval.<BigDecimal>get(CIPromo.ActionAbstract.Decimal1);
                 promotionBldr.addAction(new PercentageDiscountAction()
                                 .setPercentage(percentage));
             }
