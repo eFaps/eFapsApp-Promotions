@@ -44,6 +44,7 @@
             <foreign name="T_PROMOPROMO_FK_ASSOCID"  key="ASSOCID"   reference="T_CMASSOC(ID)"/>
             <foreign name="T_PROMOPROMO_FK_CRTR"     key="CREATOR"   reference="T_USERPERSON(ID)"/>
             <foreign name="T_PROMOPROMO_FK_MDFR"     key="MODIFIER"  reference="T_USERPERSON(ID)"/>
+            <index  name="T_PROMOPROMO_INDEX_ASSOCIDTYPEIDSTATUS" columns="ASSOCID,TYPEID,STATUS"/>
         </database>
     </definition>
 </datamodel-sqltable>
