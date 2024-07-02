@@ -235,17 +235,17 @@ public class PromotionService
         Instance ret = null;
         final var docInst = Instance.get(documentOid);
 
-        CIType ciType = null;
+        CIType ciRelDocType = null;
         if (InstanceUtils.isType(docInst, CISales.Receipt)) {
-            ciType = CIPromo.Promotion2Receipt;
+            ciRelDocType = CIPromo.Promotion2Receipt;
         } else if (InstanceUtils.isType(docInst, CISales.Invoice)) {
-            ciType = CIPromo.Promotion2Invoice;
+            ciRelDocType = CIPromo.Promotion2Invoice;
         } else if (InstanceUtils.isType(docInst, CIPOS.Order)) {
-            ciType = CIPromo.Promotion2Order;
+            ciRelDocType = CIPromo.Promotion2Order;
         } else if (InstanceUtils.isType(docInst, CIPOS.Ticket)) {
-            ciType = CIPromo.Promotion2Ticket;
+            ciRelDocType = CIPromo.Promotion2Ticket;
         }
-        if (ciType != null) {
+        if (ciRelDocType != null) {
             try {
                 final var objectMapper = getObjectMapper();
                 final var oid2promotion = new HashMap<String, Promotion>();
@@ -255,26 +255,68 @@ public class PromotionService
                     oid2promotion.put(promotion.getOid(), promotion);
                 }
 
+                final var promoInfo = objectMapper.writeValueAsString(dto);
+
                 for (final var promotionOid : dto.getPromotionOids()) {
                     final var promoInst = Instance.get(promotionOid);
                     if (InstanceUtils.isKindOf(promoInst, CIPromo.PromotionAbstract)) {
-                        final var promoInfo = objectMapper.writeValueAsString(dto);
+
                         final String promotion;
                         if (oid2promotion.containsKey(promotionOid)) {
                             promotion = objectMapper.writeValueAsString(oid2promotion.get(promotionOid));
                         } else {
                             promotion = promotions.stream().collect(Collectors.joining("\n"));
                         }
-                        ret = EQL.builder().insert(ciType)
+                        ret = EQL.builder().insert(ciRelDocType)
                                         .set(CIPromo.Promotion2DocumentAbstract.FromLink, promoInst)
                                         .set(CIPromo.Promotion2DocumentAbstract.ToLinkAbstract, docInst)
                                         .set(CIPromo.Promotion2DocumentAbstract.PromoInfo, promoInfo)
                                         .set(CIPromo.Promotion2DocumentAbstract.Promotion, promotion)
-                                        .set(CIPromo.Promotion2DocumentAbstract.NetTotalDiscount, dto.getNetTotalDiscount())
+                                        .set(CIPromo.Promotion2DocumentAbstract.NetTotalDiscount,
+                                                        dto.getNetTotalDiscount())
                                         .set(CIPromo.Promotion2DocumentAbstract.CrossTotalDiscount,
                                                         dto.getCrossTotalDiscount())
                                         .execute();
                     }
+                }
+
+                final var posEval = EQL.builder().print().query(CISales.PositionAbstract)
+                                .where()
+                                .attribute(CISales.PositionAbstract.DocumentAbstractLink).eq(docInst)
+                                .select()
+                                .orderBy(CISales.PositionAbstract.PositionNumber)
+                                .attribute(CISales.PositionAbstract.PositionNumber)
+                                .evaluate();
+                int idx = 0;
+                while (posEval.next()) {
+                    if (dto.getDetails().size() > idx) {
+                        final var detail = dto.getDetails().get(idx);
+                        final var promoInst = Instance.get(detail.getPromotionOid());
+
+                        final String promotion;
+                        if (oid2promotion.containsKey(detail.getPromotionOid())) {
+                            promotion = objectMapper.writeValueAsString(oid2promotion.get(detail.getPromotionOid()));
+                        } else {
+                            promotion = promotions.stream().collect(Collectors.joining("\n"));
+                        }
+                        if (InstanceUtils.isKindOf(promoInst, CIPromo.PromotionAbstract)) {
+                            EQL.builder().insert(ciRelDocType)
+                                            .set(CIPromo.Promotion2PositionAbstract.FromLink, promoInst)
+                                            .set(CIPromo.Promotion2PositionAbstract.ToLinkAbstract, posEval.inst())
+                                            .set(CIPromo.Promotion2PositionAbstract.PromoInfo, promoInfo)
+                                            .set(CIPromo.Promotion2PositionAbstract.Promotion, promotion)
+                                            .set(CIPromo.Promotion2PositionAbstract.NetUnitDiscount,
+                                                            detail.getNetUnitDiscount())
+                                            .set(CIPromo.Promotion2PositionAbstract.NetDiscount,
+                                                            detail.getNetDiscount())
+                                            .set(CIPromo.Promotion2PositionAbstract.CrossUnitDiscount,
+                                                            detail.getCrossUnitDiscount())
+                                            .set(CIPromo.Promotion2PositionAbstract.CrossDiscount,
+                                                            detail.getCrossDiscount())
+                                            .execute();
+                        }
+                    }
+                    idx++;
                 }
             } catch (final JsonProcessingException e) {
                 LOG.error("Catched", e);

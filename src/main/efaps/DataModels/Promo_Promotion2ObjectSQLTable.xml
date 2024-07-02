@@ -32,6 +32,8 @@
             <column name="PROMO"        not-null="true" type="STRING_LONG"/>
             <column name="DEC1"                         type="DECIMAL" scale="4" length="12"/>
             <column name="DEC2"                         type="DECIMAL" scale="4" length="12"/>
+            <column name="DEC3"                         type="DECIMAL" scale="4" length="12"/>
+            <column name="DEC4"                         type="DECIMAL" scale="4" length="12"/>
             <column name="CREATOR"      not-null="true" type="INTEGER"/>
             <column name="CREATED"      not-null="true" type="DATETIME"/>
             <column name="MODIFIER"     not-null="true" type="INTEGER"/>

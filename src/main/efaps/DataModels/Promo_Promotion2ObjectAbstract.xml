@@ -15,14 +15,17 @@
     limitations under the License.
 
 -->
-<datamodel-type xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+<datamodel-type
+    xmlns="http://www.efaps.org/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd"
+>
     <uuid>4f11b6de-2030-4beb-92cd-e91afb5f4ffd</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Promo_Promotion2ObjectAbstract</name>
-        <purpose abstract="true"/>
+        <purpose abstract="true" />
         <attribute>
             <name>Type</name>
             <type>Type</type>
@@ -65,6 +68,30 @@
             <type>String</type>
             <sqltable>Promo_Promotion2ObjectSQLTable</sqltable>
             <sqlcolumn>PROMO</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>Decimal1</name>
+            <type>Decimal</type>
+            <sqltable>Promo_Promotion2ObjectSQLTable</sqltable>
+            <sqlcolumn>DEC1</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>Decimal2</name>
+            <type>Decimal</type>
+            <sqltable>Promo_Promotion2ObjectSQLTable</sqltable>
+            <sqlcolumn>DEC2</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>Decimal3</name>
+            <type>Decimal</type>
+            <sqltable>Promo_Promotion2ObjectSQLTable</sqltable>
+            <sqlcolumn>DEC3</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>Decimal4</name>
+            <type>Decimal</type>
+            <sqltable>Promo_Promotion2ObjectSQLTable</sqltable>
+            <sqlcolumn>DEC4</sqlcolumn>
         </attribute>
         <attribute>
             <name>Creator</name>
