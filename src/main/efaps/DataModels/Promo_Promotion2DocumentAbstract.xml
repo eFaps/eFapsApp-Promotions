@@ -33,5 +33,17 @@
             <sqltable>Promo_Promotion2ObjectSQLTable</sqltable>
             <sqlcolumn>TOID</sqlcolumn>
         </attribute>
+        <attribute>
+            <name>NetTotalDiscount</name>
+            <type>Decimal</type>
+            <sqltable>Promo_Promotion2ObjectSQLTable</sqltable>
+            <sqlcolumn>DEC1</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>CrossTotalDiscount</name>
+            <type>Decimal</type>
+            <sqltable>Promo_Promotion2ObjectSQLTable</sqltable>
+            <sqlcolumn>DEC2</sqlcolumn>
+        </attribute>
     </definition>
 </datamodel-type>

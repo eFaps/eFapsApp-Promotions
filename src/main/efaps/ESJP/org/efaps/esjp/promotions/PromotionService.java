@@ -270,6 +270,9 @@ public class PromotionService
                                         .set(CIPromo.Promotion2DocumentAbstract.ToLinkAbstract, docInst)
                                         .set(CIPromo.Promotion2DocumentAbstract.PromoInfo, promoInfo)
                                         .set(CIPromo.Promotion2DocumentAbstract.Promotion, promotion)
+                                        .set(CIPromo.Promotion2DocumentAbstract.NetTotalDiscount, dto.getNetTotalDiscount())
+                                        .set(CIPromo.Promotion2DocumentAbstract.CrossTotalDiscount,
+                                                        dto.getCrossTotalDiscount())
                                         .execute();
                     }
                 }
