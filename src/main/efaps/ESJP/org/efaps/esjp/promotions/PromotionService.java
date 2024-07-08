@@ -21,13 +21,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.admin.ui.AbstractUserInterfaceObject;
 import org.efaps.ci.CIType;
+import org.efaps.db.Context;
 import org.efaps.db.Instance;
 import org.efaps.db.stmt.PrintStmt;
 import org.efaps.eql.EQL;
@@ -41,6 +44,7 @@ import org.efaps.esjp.db.InstanceUtils;
 import org.efaps.esjp.promotions.utils.Promotions;
 import org.efaps.esjp.promotions.utils.Promotions.ConditionContainer;
 import org.efaps.esjp.promotions.utils.Promotions.EntryOperator;
+import org.efaps.esjp.ui.util.ValueUtils;
 import org.efaps.promotionengine.action.PercentageDiscountAction;
 import org.efaps.promotionengine.condition.ICondition;
 import org.efaps.promotionengine.condition.ProductFamilyCondition;
@@ -50,6 +54,8 @@ import org.efaps.promotionengine.condition.StoreCondition;
 import org.efaps.promotionengine.dto.PromotionInfoDto;
 import org.efaps.promotionengine.promotion.Promotion;
 import org.efaps.util.EFapsException;
+import org.efaps.util.cache.CacheReloadException;
+import org.efaps.util.cache.InfinispanCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,33 +71,40 @@ public class PromotionService
 
     private static final Logger LOG = LoggerFactory.getLogger(PromotionService.class);
 
+    private static final String CACHENAME = PromotionService.class.getName() + ".Cache";
+
     public List<Promotion> getPromotions()
         throws EFapsException
     {
         LOG.debug("Getting Promotions");
+        var promotions = retrievePromotions();
+        if (promotions == null) {
+            promotions = new ArrayList<>();
 
-        final var promotions = new ArrayList<Promotion>();
-        final var promoEval = EQL.builder().print().query(CIPromo.PromotionAbstract)
-                        .where()
-                        .attribute(CIPromo.PromotionAbstract.StatusAbstract)
-                        .eq(CIPromo.PromotionStatus.Active)
-                        .select()
-                        .attribute(CIPromo.PromotionAbstract.Name, CIPromo.PromotionAbstract.Description,
-                                        CIPromo.PromotionAbstract.Label, CIPromo.PromotionAbstract.Priority,
-                                        CIPromo.PromotionAbstract.StartDateTime, CIPromo.PromotionAbstract.EndDateTime)
-                        .evaluate();
-        while (promoEval.next()) {
-            final var promotionBldr = Promotion.builder()
-                            .withOid(promoEval.inst().getOid())
-                            .withName(promoEval.get(CIPromo.PromotionAbstract.Name))
-                            .withDescription(promoEval.get(CIPromo.PromotionAbstract.Description))
-                            .withLabel(promoEval.get(CIPromo.PromotionAbstract.Label))
-                            .withPriority(promoEval.get(CIPromo.PromotionAbstract.Priority))
-                            .withStartDateTime(promoEval.get(CIPromo.PromotionAbstract.StartDateTime))
-                            .withEndDateTime(promoEval.get(CIPromo.PromotionAbstract.EndDateTime));
-            evalActions(promoEval.inst(), promotionBldr);
-            evalConditions(promoEval.inst(), promotionBldr);
-            promotions.add(promotionBldr.build());
+            final var promoEval = EQL.builder().print().query(CIPromo.PromotionAbstract)
+                            .where()
+                            .attribute(CIPromo.PromotionAbstract.StatusAbstract)
+                            .eq(CIPromo.PromotionStatus.Active)
+                            .select()
+                            .attribute(CIPromo.PromotionAbstract.Name, CIPromo.PromotionAbstract.Description,
+                                            CIPromo.PromotionAbstract.Label, CIPromo.PromotionAbstract.Priority,
+                                            CIPromo.PromotionAbstract.StartDateTime,
+                                            CIPromo.PromotionAbstract.EndDateTime)
+                            .evaluate();
+            while (promoEval.next()) {
+                final var promotionBldr = Promotion.builder()
+                                .withOid(promoEval.inst().getOid())
+                                .withName(promoEval.get(CIPromo.PromotionAbstract.Name))
+                                .withDescription(promoEval.get(CIPromo.PromotionAbstract.Description))
+                                .withLabel(promoEval.get(CIPromo.PromotionAbstract.Label))
+                                .withPriority(promoEval.get(CIPromo.PromotionAbstract.Priority))
+                                .withStartDateTime(promoEval.get(CIPromo.PromotionAbstract.StartDateTime))
+                                .withEndDateTime(promoEval.get(CIPromo.PromotionAbstract.EndDateTime));
+                evalActions(promoEval.inst(), promotionBldr);
+                evalConditions(promoEval.inst(), promotionBldr);
+                promotions.add(promotionBldr.build());
+            }
+            cachePromotions(promotions);
         }
         return promotions;
     }
@@ -391,5 +404,49 @@ public class PromotionService
             prodOids.add(eval.inst().getOid());
         }
         return prodOids;
+    }
+
+    public static Long getPromotionsKey(final AbstractUserInterfaceObject uiObject)
+        throws CacheReloadException, EFapsException
+    {
+        if (uiObject.getUUID() != null) {
+            uiObject.getUUID().toString();
+        }
+        return Context.getThreadContext().getCompany().getId();
+    }
+
+    public static List<Promotion> retrievePromotions()
+        throws CacheReloadException, EFapsException
+    {
+        List<Promotion> ret = null;
+        final var cache = InfinispanCache.get().<Long, String>getCache(CACHENAME);
+        final var companyId = Context.getThreadContext().getCompany().getId();
+        LOG.debug("Retreiving Promotions for {} from {}", companyId, CACHENAME);
+        final var json = cache.get(companyId);
+        if (json != null) {
+            try {
+                ret = ValueUtils.getObjectMapper().readValue(json, ValueUtils.getObjectMapper().getTypeFactory()
+                                .constructCollectionType(List.class, Promotion.class));
+            } catch (final JsonProcessingException e) {
+                LOG.error("Catched", e);
+            }
+        }
+        LOG.debug("... promotions: {}", ret);
+        return ret;
+    }
+
+    public static void cachePromotions(final List<Promotion> promotions)
+        throws CacheReloadException, EFapsException
+    {
+
+        final var cache = InfinispanCache.get().<Long, String>getCache(CACHENAME);
+        try {
+            final var json = ValueUtils.getObjectMapper().writeValueAsString(promotions);
+            final var companyId = Context.getThreadContext().getCompany().getId();
+            LOG.debug("Caching Promotions for {}", companyId);
+            cache.put(companyId, json, 1, TimeUnit.HOURS);
+        } catch (final JsonProcessingException e) {
+            LOG.error("Catched", e);
+        }
     }
 }

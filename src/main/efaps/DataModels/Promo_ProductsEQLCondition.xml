@@ -39,5 +39,17 @@
             <sqltable>Promo_ConditionsSQLTable</sqltable>
             <sqlcolumn>DEC1</sqlcolumn>
         </attribute>
+       <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanCache"
+            name="Promo_ProductsEQLCondition.INSERT_POST" event="INSERT_POST">
+            <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
+        </trigger>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanCache"
+            name="PPromo_ProductsEQLCondition.UPDATE_POST" event="UPDATE_POST">
+            <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
+        </trigger>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanCache"
+            name="Promo_ProductsEQLCondition.DELETE_POST" event="DELETE_POST">
+            <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
+        </trigger>
     </definition>
 </datamodel-type>

@@ -40,5 +40,17 @@
             <sqltable>Promo_Object2ObjectSQLTable</sqltable>
             <sqlcolumn>TOID</sqlcolumn>
         </attribute>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanCache"
+            name="Promo_StoreCondition2POSBackend.INSERT_POST" event="INSERT_POST">
+            <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
+        </trigger>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanCache"
+            name="Promo_StoreCondition2POSBackend.UPDATE_POST" event="UPDATE_POST">
+            <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
+        </trigger>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanCache"
+            name="Promo_StoreCondition2POSBackend.DELETE_POST" event="DELETE_POST">
+            <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
+        </trigger>
     </definition>
 </datamodel-type>

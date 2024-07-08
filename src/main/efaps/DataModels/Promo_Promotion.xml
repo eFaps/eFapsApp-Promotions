@@ -31,8 +31,21 @@
             <typelink>Promo_PromotionStatus</typelink>
             <sqltable>Promo_PromotionSQLTable</sqltable>
             <sqlcolumn>STATUS</sqlcolumn>
-            <trigger event="RANGE_VALUE" name="Promo_Promotion.Status.RANGE_VALUE" program="org.efaps.esjp.admin.datamodel.StatusValue">
+            <trigger event="RANGE_VALUE" name="Promo_Promotion.Status.RANGE_VALUE"
+                program="org.efaps.esjp.admin.datamodel.StatusValue">
             </trigger>
         </attribute>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanCache"
+            name="Promo_Promotion.INSERT_POST" event="INSERT_POST">
+            <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
+        </trigger>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanCache"
+            name="Promo_Promotion.UPDATE_POST" event="UPDATE_POST">
+            <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
+        </trigger>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanCache"
+            name="Promo_Promotion.DELETE_POST" event="DELETE_POST">
+            <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
+        </trigger>
     </definition>
 </datamodel-type>
