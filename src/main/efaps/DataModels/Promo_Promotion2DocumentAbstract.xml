@@ -26,6 +26,7 @@
         <version-expression>(version==latest)</version-expression>
         <name>Promo_Promotion2DocumentAbstract</name>
         <parent>Promo_Promotion2ObjectAbstract</parent>
+        <purpose abstract="true" />
         <attribute>
             <name>ToLinkAbstract</name>
             <type>Link</type>

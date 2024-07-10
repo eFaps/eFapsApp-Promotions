@@ -249,14 +249,19 @@ public class PromotionService
         final var docInst = Instance.get(documentOid);
 
         CIType ciRelDocType = null;
+        CIType ciRelPosType = null;
         if (InstanceUtils.isType(docInst, CISales.Receipt)) {
             ciRelDocType = CIPromo.Promotion2Receipt;
+            ciRelPosType = CIPromo.Promotion2ReceiptPosition;
         } else if (InstanceUtils.isType(docInst, CISales.Invoice)) {
             ciRelDocType = CIPromo.Promotion2Invoice;
+            ciRelPosType = CIPromo.Promotion2InvoicePosition;
         } else if (InstanceUtils.isType(docInst, CIPOS.Order)) {
             ciRelDocType = CIPromo.Promotion2Order;
+            ciRelPosType = CIPromo.Promotion2OrderPosition;
         } else if (InstanceUtils.isType(docInst, CIPOS.Ticket)) {
             ciRelDocType = CIPromo.Promotion2Ticket;
+            ciRelPosType = CIPromo.Promotion2TicketPosition;
         }
         if (ciRelDocType != null) {
             try {
@@ -313,7 +318,7 @@ public class PromotionService
                             promotion = promotions.stream().collect(Collectors.joining("\n"));
                         }
                         if (InstanceUtils.isKindOf(promoInst, CIPromo.PromotionAbstract)) {
-                            EQL.builder().insert(ciRelDocType)
+                            EQL.builder().insert(ciRelPosType)
                                             .set(CIPromo.Promotion2PositionAbstract.FromLink, promoInst)
                                             .set(CIPromo.Promotion2PositionAbstract.ToLinkAbstract, posEval.inst())
                                             .set(CIPromo.Promotion2PositionAbstract.PromoInfo, promoInfo)
