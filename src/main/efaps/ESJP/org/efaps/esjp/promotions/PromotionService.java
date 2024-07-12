@@ -34,6 +34,7 @@ import org.efaps.db.Context;
 import org.efaps.db.Instance;
 import org.efaps.db.stmt.PrintStmt;
 import org.efaps.eql.EQL;
+import org.efaps.eql.builder.Print;
 import org.efaps.eql2.IPrintQueryStatement;
 import org.efaps.esjp.ci.CIPOS;
 import org.efaps.esjp.ci.CIProducts;
@@ -73,38 +74,54 @@ public class PromotionService
 
     private static final String CACHENAME = PromotionService.class.getName() + ".Cache";
 
+    public Promotion getPromotion(Instance promotionInstance)
+        throws EFapsException
+    {
+        final Print print = EQL.builder().print(promotionInstance);
+        final var promotions = evalPromotions(print);
+        return promotions.isEmpty() ? null : promotions.get(0);
+    }
+
     public List<Promotion> getPromotions()
         throws EFapsException
     {
         LOG.debug("Getting Promotions");
         var promotions = retrievePromotions();
         if (promotions == null) {
-            promotions = new ArrayList<>();
-
-            final var promoEval = EQL.builder().print().query(CIPromo.PromotionAbstract)
+            final Print promoEval = EQL.builder().print().query(CIPromo.PromotionAbstract)
                             .where()
                             .attribute(CIPromo.PromotionAbstract.StatusAbstract)
                             .eq(CIPromo.PromotionStatus.Active)
-                            .select()
-                            .attribute(CIPromo.PromotionAbstract.Name, CIPromo.PromotionAbstract.Description,
-                                            CIPromo.PromotionAbstract.Label, CIPromo.PromotionAbstract.Priority,
-                                            CIPromo.PromotionAbstract.StartDateTime,
-                                            CIPromo.PromotionAbstract.EndDateTime)
-                            .evaluate();
-            while (promoEval.next()) {
-                final var promotionBldr = Promotion.builder()
-                                .withOid(promoEval.inst().getOid())
-                                .withName(promoEval.get(CIPromo.PromotionAbstract.Name))
-                                .withDescription(promoEval.get(CIPromo.PromotionAbstract.Description))
-                                .withLabel(promoEval.get(CIPromo.PromotionAbstract.Label))
-                                .withPriority(promoEval.get(CIPromo.PromotionAbstract.Priority))
-                                .withStartDateTime(promoEval.get(CIPromo.PromotionAbstract.StartDateTime))
-                                .withEndDateTime(promoEval.get(CIPromo.PromotionAbstract.EndDateTime));
-                evalActions(promoEval.inst(), promotionBldr);
-                evalConditions(promoEval.inst(), promotionBldr);
-                promotions.add(promotionBldr.build());
-            }
+                            .select();
+            promotions = evalPromotions(promoEval);
             cachePromotions(promotions);
+        }
+        return promotions;
+    }
+
+    protected List<Promotion> evalPromotions(final Print print)
+        throws EFapsException
+    {
+        final List<Promotion> promotions = new ArrayList<>();
+
+        final var promoEval = print
+                        .attribute(CIPromo.PromotionAbstract.Name, CIPromo.PromotionAbstract.Description,
+                                        CIPromo.PromotionAbstract.Label, CIPromo.PromotionAbstract.Priority,
+                                        CIPromo.PromotionAbstract.StartDateTime,
+                                        CIPromo.PromotionAbstract.EndDateTime)
+                        .evaluate();
+        while (promoEval.next()) {
+            final var promotionBldr = Promotion.builder()
+                            .withOid(promoEval.inst().getOid())
+                            .withName(promoEval.get(CIPromo.PromotionAbstract.Name))
+                            .withDescription(promoEval.get(CIPromo.PromotionAbstract.Description))
+                            .withLabel(promoEval.get(CIPromo.PromotionAbstract.Label))
+                            .withPriority(promoEval.get(CIPromo.PromotionAbstract.Priority))
+                            .withStartDateTime(promoEval.get(CIPromo.PromotionAbstract.StartDateTime))
+                            .withEndDateTime(promoEval.get(CIPromo.PromotionAbstract.EndDateTime));
+            evalActions(promoEval.inst(), promotionBldr);
+            evalConditions(promoEval.inst(), promotionBldr);
+            promotions.add(promotionBldr.build());
         }
         return promotions;
     }

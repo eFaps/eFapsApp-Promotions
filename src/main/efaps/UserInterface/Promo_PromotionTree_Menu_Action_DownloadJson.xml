@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
     Copyright © 2003 - 2024 The eFaps Team (-)
 
@@ -16,17 +15,25 @@
     limitations under the License.
 
 -->
-
-<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>6e2c5532-9607-4752-92f7-a18afd8bfc09</uuid>
+<ui-command
+    xmlns="http://www.efaps.org/xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd"
+>
+    <uuid>6a1ad38a-1cbd-44db-b57e-0fedf1c175af</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_PromotionTree_Menu_Action</name>
-        <childs>
-            <child>Promo_PromotionTree_Menu_Action_Edit</child>
-            <child>Promo_PromotionTree_Menu_Action_DownloadJson</child>
-        </childs>
+        <name>Promo_PromotionTree_Menu_Action_DownloadJson</name>
+        <access>
+            <role>Administration</role>
+        </access>
+        <target>
+            <execute
+                program="org.efaps.esjp.promotions.Promotion"
+                method="ceateJson" />
+        </target>
+        <property name="TargetShowFile">true</property>
+        <property name="Target">hidden</property>
     </definition>
-</ui-menu>
+</ui-command>
