@@ -39,13 +39,17 @@
             name="Promo_Promotion.INSERT_POST" event="INSERT_POST">
             <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
         </trigger>
-        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanCache"
-            name="Promo_Promotion.UPDATE_POST" event="UPDATE_POST">
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanCache" index="1"
+            name="Promo_Promotion.UPDATE_POST.1" event="UPDATE_POST">
             <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
         </trigger>
         <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanCache"
             name="Promo_Promotion.DELETE_POST" event="DELETE_POST">
             <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
+        </trigger>
+        <trigger program="org.efaps.esjp.common.history.UpdateHistoryTrigger" index="2"
+            name="Promo_Promotion.UPDATE_POST.2"
+            event="UPDATE_POST">
         </trigger>
     </definition>
 </datamodel-type>

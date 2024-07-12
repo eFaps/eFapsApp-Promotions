@@ -32,6 +32,8 @@
         <childs>
             <child>Promo_PromotionTree_Conditions</child>
             <child>Promo_PromotionTree_Actions</child>
+            <child>Common_History_ObjectTree_StatusLog</child>
+            <child>Common_History_ObjectTree_HistoryLog</child>
         </childs>
         <property name="Target">content</property>
         <property name="TargetMode">view</property>
