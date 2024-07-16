@@ -28,7 +28,7 @@
         <parent>Promo_ChildObjectAbstract</parent>
         <attribute>
             <name>DateConditionLink</name>
-            <type>Type</type>
+            <type>Link</type>
             <typelink>Promo_DateCondition</typelink>
             <sqltable>Promo_ChildObjectSQLTable</sqltable>
             <sqlcolumn>PARENTID</sqlcolumn>

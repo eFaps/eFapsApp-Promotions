@@ -16,6 +16,7 @@
 package org.efaps.esjp.promotions;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -47,6 +48,7 @@ import org.efaps.esjp.promotions.utils.Promotions.ConditionContainer;
 import org.efaps.esjp.promotions.utils.Promotions.EntryOperator;
 import org.efaps.esjp.ui.util.ValueUtils;
 import org.efaps.promotionengine.action.PercentageDiscountAction;
+import org.efaps.promotionengine.condition.DateCondition;
 import org.efaps.promotionengine.condition.ICondition;
 import org.efaps.promotionengine.condition.ProductFamilyCondition;
 import org.efaps.promotionengine.condition.ProductFamilyConditionEntry;
@@ -249,6 +251,22 @@ public class PromotionService
                                 .setEntries(prodOids)
                                 .setNote(eval.get(CIPromo.ConditionAbstract.Note));
             }
+            if (InstanceUtils.isType(eval.inst(), CIPromo.DateCondition)) {
+                condition = new DateCondition().setNote(eval.get(CIPromo.ConditionAbstract.Note));
+                final var entriesEval = EQL.builder().print().query(CIPromo.DateConditionEntry)
+                                .where()
+                                .attribute(CIPromo.DateConditionEntry.DateConditionLink)
+                                .eq(eval.inst())
+                                .select()
+                                .attribute(CIPromo.DateConditionEntry.StartDate, CIPromo.DateConditionEntry.EndDate)
+                                .evaluate();
+                while (entriesEval.next()) {
+                   final LocalDate startDate = entriesEval.get(CIPromo.DateConditionEntry.StartDate);
+                   final LocalDate endDate = entriesEval.get(CIPromo.DateConditionEntry.EndDate);
+                   ((DateCondition) condition).addRange(startDate, endDate);
+                }
+            }
+
             if (container.equals(ConditionContainer.SOURCE)) {
                 promotionBldr.addSourceCondition(condition);
             } else {

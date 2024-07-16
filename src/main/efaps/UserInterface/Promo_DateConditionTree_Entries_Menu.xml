@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
     Copyright © 2003 - 2024 The eFaps Team (-)
 
@@ -16,22 +15,15 @@
     limitations under the License.
 
 -->
-
-<ui-menu xmlns="http://www.efaps.org/xsd"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>1506ffb2-7e36-4bab-8149-c692cc9ef986</uuid>
+    <uuid>b7352ff3-0197-4a9c-b940-a1762f10d8e2</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_PromotionTree_Conditions_Menu_Action</name>
+        <name>Promo_DateConditionTree_Entries_Menu</name>
         <childs>
-            <child>Promo_PromotionTree_Conditions_Menu_Action_CreateProductsCondition</child>
-            <child>Promo_PromotionTree_Conditions_Menu_Action_CreateProductFamilyCondition</child>
-            <child>Promo_PromotionTree_Conditions_Menu_Action_CreateStoreCondition</child>
-            <child>Promo_PromotionTree_Conditions_Menu_Action_CreateProductsEQLCondition</child>
-            <child>Promo_PromotionTree_Conditions_Menu_Action_CreateDateCondition</child>
-            <child>Promo_PromotionTree_Conditions_Menu_Action_Delete</child>
+            <child>Promo_DateConditionTree_Entries_Menu_Action</child>
         </childs>
     </definition>
 </ui-menu>
