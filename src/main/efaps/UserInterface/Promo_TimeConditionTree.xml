@@ -16,17 +16,22 @@
     limitations under the License.
 
 -->
-<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-menu xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>7cc3208b-cd59-42d8-b71a-473884f02842</uuid>
+    <uuid>f6ece344-720e-4a77-8841-cc52a2e6e296</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_DateConditionTree_Entries_Menu_Action_Delete</name>
+        <name>Promo_TimeConditionTree</name>
         <target>
-            <execute program="org.efaps.esjp.common.uitable.CommonDelete"/>
+            <menu>Promo_TimeConditionTree_Menu</menu>
+            <form>Promo_TimeConditionForm</form>
         </target>
-        <property name="AskUser">true</property>
-        <property name="Submit">true</property>
+        <type>Promo_TimeCondition</type>
+        <childs>
+            <child>Promo_TimeConditionTree_Entries</child>
+        </childs>
+        <property name="Target">content</property>
+        <property name="TargetMode">view</property>
     </definition>
-</ui-command>
+</ui-menu>

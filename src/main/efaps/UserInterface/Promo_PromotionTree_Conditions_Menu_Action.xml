@@ -31,6 +31,7 @@
             <child>Promo_PromotionTree_Conditions_Menu_Action_CreateStoreCondition</child>
             <child>Promo_PromotionTree_Conditions_Menu_Action_CreateProductsEQLCondition</child>
             <child>Promo_PromotionTree_Conditions_Menu_Action_CreateDateCondition</child>
+            <child>Promo_PromotionTree_Conditions_Menu_Action_CreateTimeCondition</child>
             <child>Promo_PromotionTree_Conditions_Menu_Action_Delete</child>
         </childs>
     </definition>

@@ -18,11 +18,11 @@
 -->
 <ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>7cc3208b-cd59-42d8-b71a-473884f02842</uuid>
+    <uuid>0225258c-71c3-456d-b375-2214f59fe7d7</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_DateConditionTree_Entries_Menu_Action_Delete</name>
+        <name>Promo_TimeConditionTree_Entries_Menu_Action_Delete</name>
         <target>
             <execute program="org.efaps.esjp.common.uitable.CommonDelete"/>
         </target>

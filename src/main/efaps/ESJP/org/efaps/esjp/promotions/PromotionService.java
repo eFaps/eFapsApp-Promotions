@@ -17,6 +17,8 @@ package org.efaps.esjp.promotions;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.OffsetTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -54,8 +56,10 @@ import org.efaps.promotionengine.condition.ProductFamilyCondition;
 import org.efaps.promotionengine.condition.ProductFamilyConditionEntry;
 import org.efaps.promotionengine.condition.ProductsCondition;
 import org.efaps.promotionengine.condition.StoreCondition;
+import org.efaps.promotionengine.condition.TimeCondition;
 import org.efaps.promotionengine.dto.PromotionInfoDto;
 import org.efaps.promotionengine.promotion.Promotion;
+import org.efaps.util.DateTimeUtil;
 import org.efaps.util.EFapsException;
 import org.efaps.util.cache.CacheReloadException;
 import org.efaps.util.cache.InfinispanCache;
@@ -264,6 +268,23 @@ public class PromotionService
                    final LocalDate startDate = entriesEval.get(CIPromo.DateConditionEntry.StartDate);
                    final LocalDate endDate = entriesEval.get(CIPromo.DateConditionEntry.EndDate);
                    ((DateCondition) condition).addRange(startDate, endDate);
+                }
+            }
+            if (InstanceUtils.isType(eval.inst(), CIPromo.TimeCondition)) {
+                condition = new TimeCondition().setNote(eval.get(CIPromo.ConditionAbstract.Note));
+                final var entriesEval = EQL.builder().print().query(CIPromo.TimeConditionEntry)
+                                .where()
+                                .attribute(CIPromo.TimeConditionEntry.TimeConditionLink)
+                                .eq(eval.inst())
+                                .select()
+                                .attribute(CIPromo.TimeConditionEntry.StartTime, CIPromo.TimeConditionEntry.EndTime)
+                                .evaluate();
+                while (entriesEval.next()) {
+                   final LocalTime startTime = entriesEval.get(CIPromo.TimeConditionEntry.StartTime);
+                   final LocalTime endTime = entriesEval.get(CIPromo.TimeConditionEntry.EndTime);
+                   ((TimeCondition) condition).addRange(
+                                   startTime.atOffset(OffsetTime.now(DateTimeUtil.getDBZoneId()).getOffset()),
+                                   endTime.atOffset(OffsetTime.now(DateTimeUtil.getDBZoneId()).getOffset()));
                 }
             }
 

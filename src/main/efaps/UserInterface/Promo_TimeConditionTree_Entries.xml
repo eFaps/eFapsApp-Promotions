@@ -18,15 +18,21 @@
 -->
 <ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>7cc3208b-cd59-42d8-b71a-473884f02842</uuid>
+    <uuid>dd545516-15e2-4b3f-a57c-6887b49ba8eb</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_DateConditionTree_Entries_Menu_Action_Delete</name>
+        <name>Promo_TimeConditionTree_Entries</name>
         <target>
-            <execute program="org.efaps.esjp.common.uitable.CommonDelete"/>
+            <menu>Promo_TimeConditionTree_Entries_Menu</menu>
+            <table>Promo_TimeConditionEntryTable</table>
+            <evaluate program="org.efaps.esjp.common.uitable.MultiPrint">
+                <property name="LinkFrom">TimeConditionLink</property>
+                <property name="Type">Promo_TimeConditionEntry</property>
+            </evaluate>
         </target>
-        <property name="AskUser">true</property>
-        <property name="Submit">true</property>
+        <property name="Target">content</property>
+        <property name="TargetMode">view</property>
+        <property name="TargetShowCheckBoxes">true</property>
     </definition>
 </ui-command>
