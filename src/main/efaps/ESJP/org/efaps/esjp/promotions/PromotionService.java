@@ -51,6 +51,7 @@ import org.efaps.esjp.promotions.utils.Promotions.EntryOperator;
 import org.efaps.esjp.ui.util.ValueUtils;
 import org.efaps.promotionengine.action.PercentageDiscountAction;
 import org.efaps.promotionengine.condition.DateCondition;
+import org.efaps.promotionengine.condition.DocTotalCondition;
 import org.efaps.promotionengine.condition.ICondition;
 import org.efaps.promotionengine.condition.ProductFamilyCondition;
 import org.efaps.promotionengine.condition.ProductFamilyConditionEntry;
@@ -286,6 +287,11 @@ public class PromotionService
                                    startTime.atOffset(OffsetTime.now(DateTimeUtil.getDBZoneId()).getOffset()),
                                    endTime.atOffset(OffsetTime.now(DateTimeUtil.getDBZoneId()).getOffset()));
                 }
+            }
+
+            if (InstanceUtils.isType(eval.inst(), CIPromo.DocTotalCondition)) {
+                condition = new DocTotalCondition().setTotal(eval.get(CIPromo.ConditionAbstract.Decimal1))
+                                .setNote(eval.get(CIPromo.ConditionAbstract.Note));
             }
 
             if (container.equals(ConditionContainer.SOURCE)) {
