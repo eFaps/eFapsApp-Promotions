@@ -50,6 +50,7 @@ import org.efaps.esjp.promotions.utils.Promotions.ConditionContainer;
 import org.efaps.esjp.promotions.utils.Promotions.EntryOperator;
 import org.efaps.esjp.ui.util.ValueUtils;
 import org.efaps.promotionengine.action.PercentageDiscountAction;
+import org.efaps.promotionengine.action.Strategy;
 import org.efaps.promotionengine.condition.DateCondition;
 import org.efaps.promotionengine.condition.DocTotalCondition;
 import org.efaps.promotionengine.condition.ICondition;
@@ -60,7 +61,6 @@ import org.efaps.promotionengine.condition.StoreCondition;
 import org.efaps.promotionengine.condition.TimeCondition;
 import org.efaps.promotionengine.dto.PromotionInfoDto;
 import org.efaps.promotionengine.promotion.Promotion;
-import org.efaps.util.DateTimeUtil;
 import org.efaps.util.EFapsException;
 import org.efaps.util.cache.CacheReloadException;
 import org.efaps.util.cache.InfinispanCache;
@@ -141,13 +141,17 @@ public class PromotionService
                         .where()
                         .attribute(CIPromo.ActionAbstract.PromotionLink).eq(promoInst)
                         .select()
-                        .attribute(CIPromo.ActionAbstract.ID, CIPromo.ActionAbstract.Decimal1)
+                        .attribute(CIPromo.ActionAbstract.ID, CIPromo.ActionAbstract.Decimal1,
+                                        CIPromo.ActionAbstract.Int1)
                         .evaluate();
         while (eval.next()) {
             if (InstanceUtils.isType(eval.inst(), CIPromo.PercentageDiscountAction)) {
                 final var percentage = eval.<BigDecimal>get(CIPromo.ActionAbstract.Decimal1);
+                final var ordinal = eval.<Integer>get(CIPromo.ActionAbstract.Int1);
+                final var strategy = ordinal == null ? Strategy.CHEAPEST : Strategy.values()[ordinal];
+
                 promotionBldr.addAction(new PercentageDiscountAction()
-                                .setPercentage(percentage));
+                                .setPercentage(percentage).setStrategy(strategy));
             }
         }
     }
@@ -266,9 +270,9 @@ public class PromotionService
                                 .attribute(CIPromo.DateConditionEntry.StartDate, CIPromo.DateConditionEntry.EndDate)
                                 .evaluate();
                 while (entriesEval.next()) {
-                   final LocalDate startDate = entriesEval.get(CIPromo.DateConditionEntry.StartDate);
-                   final LocalDate endDate = entriesEval.get(CIPromo.DateConditionEntry.EndDate);
-                   ((DateCondition) condition).addRange(startDate, endDate);
+                    final LocalDate startDate = entriesEval.get(CIPromo.DateConditionEntry.StartDate);
+                    final LocalDate endDate = entriesEval.get(CIPromo.DateConditionEntry.EndDate);
+                    ((DateCondition) condition).addRange(startDate, endDate);
                 }
             }
             if (InstanceUtils.isType(eval.inst(), CIPromo.TimeCondition)) {
@@ -281,11 +285,13 @@ public class PromotionService
                                 .attribute(CIPromo.TimeConditionEntry.StartTime, CIPromo.TimeConditionEntry.EndTime)
                                 .evaluate();
                 while (entriesEval.next()) {
-                   final LocalTime startTime = entriesEval.get(CIPromo.TimeConditionEntry.StartTime);
-                   final LocalTime endTime = entriesEval.get(CIPromo.TimeConditionEntry.EndTime);
-                   ((TimeCondition) condition).addRange(
-                                   startTime.atOffset(OffsetTime.now(DateTimeUtil.getDBZoneId()).getOffset()),
-                                   endTime.atOffset(OffsetTime.now(DateTimeUtil.getDBZoneId()).getOffset()));
+                    final LocalTime startTime = entriesEval.get(CIPromo.TimeConditionEntry.StartTime);
+                    final LocalTime endTime = entriesEval.get(CIPromo.TimeConditionEntry.EndTime);
+                    ((TimeCondition) condition).addRange(
+                                    startTime.atOffset(
+                                                    OffsetTime.now(Context.getThreadContext().getZoneId()).getOffset()),
+                                    endTime.atOffset(OffsetTime.now(Context.getThreadContext().getZoneId())
+                                                    .getOffset()));
                 }
             }
 

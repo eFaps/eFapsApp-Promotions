@@ -56,6 +56,12 @@
             <sqltable>Promo_ActionsSQLTable</sqltable>
             <sqlcolumn>DEC1</sqlcolumn>
         </attribute>
+         <attribute>
+            <name>Int1</name>
+            <type>Integer</type>
+            <sqltable>Promo_ActionsSQLTable</sqltable>
+            <sqlcolumn>INT1</sqlcolumn>
+        </attribute>
         <attribute>
             <name>Creator</name>
             <type>CreatorLink</type>

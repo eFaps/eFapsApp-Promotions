@@ -105,6 +105,18 @@ public class Promotions
         }
     }
 
+    public enum ActionStrategy implements IEnum
+    {
+
+        CHEAPEST, PRICIEST;
+
+        @Override
+        public int getInt()
+        {
+            return ordinal();
+        }
+    }
+
     public static SystemConfiguration getSysConfig()
         throws CacheReloadException
     {

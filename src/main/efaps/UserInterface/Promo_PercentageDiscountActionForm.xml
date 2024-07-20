@@ -25,6 +25,12 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Promo_PercentageDiscountActionForm</name>
+        <field name="actionStrategy">
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="Attribute">ActionStrategy</property>
+            <property name="Required">true</property>
+        </field>
          <field name="percentage">
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>

@@ -30,6 +30,7 @@
             <column name="TYPEID"   not-null="true" type="INTEGER"/>
             <column name="PROMOID"  not-null="true" type="INTEGER"/>
             <column name="DEC1"                     type="DECIMAL"  length="16" scale="4"/>
+            <column name="INT1"                     type="INTEGER"/>
             <column name="CREATOR"  not-null="true" type="INTEGER"/>
             <column name="CREATED"  not-null="true" type="DATETIME"/>
             <column name="MODIFIER" not-null="true" type="INTEGER"/>
