@@ -49,6 +49,7 @@ import org.efaps.esjp.promotions.utils.Promotions;
 import org.efaps.esjp.promotions.utils.Promotions.ConditionContainer;
 import org.efaps.esjp.promotions.utils.Promotions.EntryOperator;
 import org.efaps.esjp.ui.util.ValueUtils;
+import org.efaps.promotionengine.action.FixedAmountAction;
 import org.efaps.promotionengine.action.PercentageDiscountAction;
 import org.efaps.promotionengine.action.Strategy;
 import org.efaps.promotionengine.condition.DateCondition;
@@ -145,13 +146,18 @@ public class PromotionService
                                         CIPromo.ActionAbstract.Int1)
                         .evaluate();
         while (eval.next()) {
+            final var decimal1 = eval.<BigDecimal>get(CIPromo.ActionAbstract.Decimal1);
+            final var int1 = eval.<Integer>get(CIPromo.ActionAbstract.Int1);
             if (InstanceUtils.isType(eval.inst(), CIPromo.PercentageDiscountAction)) {
-                final var percentage = eval.<BigDecimal>get(CIPromo.ActionAbstract.Decimal1);
-                final var ordinal = eval.<Integer>get(CIPromo.ActionAbstract.Int1);
-                final var strategy = ordinal == null ? Strategy.CHEAPEST : Strategy.values()[ordinal];
-
+                final var strategy = int1 == null ? Strategy.CHEAPEST : Strategy.values()[int1];
                 promotionBldr.addAction(new PercentageDiscountAction()
-                                .setPercentage(percentage).setStrategy(strategy));
+                                .setPercentage(decimal1)
+                                .setStrategy(strategy));
+            } else if (InstanceUtils.isType(eval.inst(), CIPromo.FixedAmountAction)) {
+                final var strategy = int1 == null ? Strategy.CHEAPEST : Strategy.values()[int1];
+                promotionBldr.addAction(new FixedAmountAction()
+                                .setAmount(decimal1)
+                                .setStrategy(strategy));
             }
         }
     }

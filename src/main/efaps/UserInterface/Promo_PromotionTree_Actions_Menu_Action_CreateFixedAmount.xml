@@ -16,19 +16,21 @@
     limitations under the License.
 
 -->
-
-<ui-menu xmlns="http://www.efaps.org/xsd"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>3cc75416-cd7a-43f0-b91f-d21baabc2a64</uuid>
+    <uuid>bcb45aa7-17b9-4bef-b046-4a565705a07f</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_PromotionTree_Actions_Menu_Action</name>
-        <childs>
-            <child>Promo_PromotionTree_Actions_Menu_Action_CreatePercentageDiscount</child>
-            <child>Promo_PromotionTree_Actions_Menu_Action_CreateFixedAmount</child>
-            <child>Promo_PromotionTree_Actions_Menu_Action_Delete</child>
-        </childs>
+        <name>Promo_PromotionTree_Actions_Menu_Action_CreateFixedAmount</name>
+        <target>
+            <form>Promo_FixedAmountActionForm</form>
+            <execute program="org.efaps.esjp.common.uiform.Create"/>
+        </target>
+        <property name="Target">modal</property>
+        <property name="TargetCreateType">Promo_FixedAmountAction</property>
+        <property name="TargetConnectAttribute">Promo_ActionAbstract/PromotionLink</property>
+        <property name="TargetMode">create</property>
+        <property name="TargetDefaultMenu">none</property>
     </definition>
-</ui-menu>
+</ui-command>
