@@ -28,10 +28,17 @@
             <property name="ModeEdit">EDITABLE</property>
             <property name="Attribute">Note</property>
         </field>
+        <field name="operator">
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="Attribute">Operator</property>
+            <property name="Required">true</property>
+        </field>
          <field name="amount">
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
             <property name="Attribute">Amount</property>
+            <property name="Required">true</property>
         </field>
         <field character="Group" name="createGroup">
             <property name="GroupCount">2</property>

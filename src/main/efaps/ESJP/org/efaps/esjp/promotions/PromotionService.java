@@ -55,6 +55,7 @@ import org.efaps.promotionengine.action.Strategy;
 import org.efaps.promotionengine.condition.DateCondition;
 import org.efaps.promotionengine.condition.DocTotalCondition;
 import org.efaps.promotionengine.condition.ICondition;
+import org.efaps.promotionengine.condition.Operator;
 import org.efaps.promotionengine.condition.ProductFamilyCondition;
 import org.efaps.promotionengine.condition.ProductFamilyConditionEntry;
 import org.efaps.promotionengine.condition.ProductsCondition;
@@ -302,7 +303,11 @@ public class PromotionService
             }
 
             if (InstanceUtils.isType(eval.inst(), CIPromo.DocTotalCondition)) {
-                condition = new DocTotalCondition().setTotal(eval.get(CIPromo.ConditionAbstract.Decimal1))
+                final var ordinal = eval.<Integer>get(CIPromo.ConditionAbstract.Int1);
+                final var operator = Operator.values()[ordinal];
+                condition = new DocTotalCondition()
+                                .setTotal(eval.get(CIPromo.ConditionAbstract.Decimal1))
+                                .setOperator(operator)
                                 .setNote(eval.get(CIPromo.ConditionAbstract.Note));
             }
 

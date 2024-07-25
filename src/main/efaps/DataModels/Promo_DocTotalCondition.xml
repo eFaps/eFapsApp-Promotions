@@ -25,6 +25,13 @@
         <name>Promo_DocTotalCondition</name>
         <parent>Promo_ConditionAbstract</parent>
         <attribute>
+            <name>Operator</name>
+            <type>Enum</type>
+            <className>org.efaps.esjp.promotions.utils.Promotions$Operator</className>
+            <sqltable>Promo_ConditionsSQLTable</sqltable>
+            <sqlcolumn>INT1</sqlcolumn>
+        </attribute>
+        <attribute>
             <name>Amount</name>
             <type>Decimal</type>
             <sqltable>Promo_ConditionsSQLTable</sqltable>

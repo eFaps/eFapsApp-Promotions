@@ -87,6 +87,18 @@ public class Promotions
         }
     }
 
+    public enum Operator implements IEnum
+    {
+
+        EQUAL, GREATER, GREATEREQUAL, SMALLER, SMALLEREQUAL;
+
+        @Override
+        public int getInt()
+        {
+            return ordinal();
+        }
+    }
+
     public enum Weekday implements IBitEnum
     {
 
