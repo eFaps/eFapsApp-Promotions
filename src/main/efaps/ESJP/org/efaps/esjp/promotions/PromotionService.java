@@ -58,6 +58,7 @@ import org.efaps.promotionengine.condition.ICondition;
 import org.efaps.promotionengine.condition.Operator;
 import org.efaps.promotionengine.condition.ProductFamilyCondition;
 import org.efaps.promotionengine.condition.ProductFamilyConditionEntry;
+import org.efaps.promotionengine.condition.ProductTotalCondition;
 import org.efaps.promotionengine.condition.ProductsCondition;
 import org.efaps.promotionengine.condition.StoreCondition;
 import org.efaps.promotionengine.condition.TimeCondition;
@@ -197,8 +198,7 @@ public class PromotionService
                                                 entryOperator.name()))
                                 .setEntries(prodOids)
                                 .setNote(eval.get(CIPromo.ConditionAbstract.Note));
-            }
-            if (InstanceUtils.isType(eval.inst(), CIPromo.ProductFamilyCondition)) {
+            } else if (InstanceUtils.isType(eval.inst(), CIPromo.ProductFamilyCondition)) {
                 final var ordinal = eval.<Integer>get(CIPromo.ConditionAbstract.Int1);
                 final var entryOperator = EntryOperator.values()[ordinal];
                 final var familyEval = EQL.builder().print().query(CIPromo.ProductFamilyCondition2ProductFamilyAbstract)
@@ -231,8 +231,7 @@ public class PromotionService
                                                 entryOperator.name()))
                                 .setEntries(entries)
                                 .setNote(eval.get(CIPromo.ConditionAbstract.Note));
-            }
-            if (InstanceUtils.isType(eval.inst(), CIPromo.StoreCondition)) {
+            } else if (InstanceUtils.isType(eval.inst(), CIPromo.StoreCondition)) {
                 final var ordinal = eval.<Integer>get(CIPromo.ConditionAbstract.Int1);
                 final var entryOperator = EntryOperator.values()[ordinal];
                 final var backendEval = EQL.builder().print().query(CIPromo.StoreCondition2POSBackend)
@@ -253,8 +252,7 @@ public class PromotionService
                     final String backendIdentifier = backendEval.get("backendIdentifier");
                     ((StoreCondition) condition).addIdentifier(backendIdentifier);
                 }
-            }
-            if (InstanceUtils.isType(eval.inst(), CIPromo.ProductsEQLCondition)) {
+            } else if (InstanceUtils.isType(eval.inst(), CIPromo.ProductsEQLCondition)) {
                 final var ordinal = eval.<Integer>get(CIPromo.ConditionAbstract.Int1);
                 final var entryOperator = EntryOperator.values()[ordinal];
                 final var prodOids = evalProductOids4EQL(eval.inst());
@@ -266,8 +264,7 @@ public class PromotionService
 
                                 .setEntries(prodOids)
                                 .setNote(eval.get(CIPromo.ConditionAbstract.Note));
-            }
-            if (InstanceUtils.isType(eval.inst(), CIPromo.DateCondition)) {
+            } else if (InstanceUtils.isType(eval.inst(), CIPromo.DateCondition)) {
                 condition = new DateCondition().setNote(eval.get(CIPromo.ConditionAbstract.Note));
                 final var entriesEval = EQL.builder().print().query(CIPromo.DateConditionEntry)
                                 .where()
@@ -281,8 +278,7 @@ public class PromotionService
                     final LocalDate endDate = entriesEval.get(CIPromo.DateConditionEntry.EndDate);
                     ((DateCondition) condition).addRange(startDate, endDate);
                 }
-            }
-            if (InstanceUtils.isType(eval.inst(), CIPromo.TimeCondition)) {
+            } else if (InstanceUtils.isType(eval.inst(), CIPromo.TimeCondition)) {
                 condition = new TimeCondition().setNote(eval.get(CIPromo.ConditionAbstract.Note));
                 final var entriesEval = EQL.builder().print().query(CIPromo.TimeConditionEntry)
                                 .where()
@@ -300,15 +296,30 @@ public class PromotionService
                                     endTime.atOffset(OffsetTime.now(Context.getThreadContext().getZoneId())
                                                     .getOffset()));
                 }
-            }
-
-            if (InstanceUtils.isType(eval.inst(), CIPromo.DocTotalCondition)) {
+            } else if (InstanceUtils.isType(eval.inst(), CIPromo.DocTotalCondition)) {
                 final var ordinal = eval.<Integer>get(CIPromo.ConditionAbstract.Int1);
                 final var operator = Operator.values()[ordinal];
                 condition = new DocTotalCondition()
                                 .setTotal(eval.get(CIPromo.ConditionAbstract.Decimal1))
                                 .setOperator(operator)
                                 .setNote(eval.get(CIPromo.ConditionAbstract.Note));
+            } else if (InstanceUtils.isType(eval.inst(), CIPromo.ProductTotalCondition)) {
+                final var ordinal = eval.<Integer>get(CIPromo.ConditionAbstract.Int1);
+                final var operator = Operator.values()[ordinal];
+                condition = new ProductTotalCondition()
+                                .setTotal(eval.get(CIPromo.ConditionAbstract.Decimal1))
+                                .setOperator(operator)
+                                .setNote(eval.get(CIPromo.ConditionAbstract.Note));
+
+                final var prodEval = EQL.builder().print().query(CIPromo.ProductTotalCondition2ProductAbstract).where()
+                                .attribute(CIPromo.ProductTotalCondition2ProductAbstract.FromLink).eq(eval.inst())
+                                .select()
+                                .linkto(CIPromo.ProductTotalCondition2ProductAbstract.ToLink).oid().as("prodOid")
+                                .evaluate();
+                new ArrayList<String>();
+                while (prodEval.next()) {
+                    ((ProductTotalCondition) condition).addProduct(prodEval.get("prodOid"));
+                }
             }
 
             if (container.equals(ConditionContainer.SOURCE)) {

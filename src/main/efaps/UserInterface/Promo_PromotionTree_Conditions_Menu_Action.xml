@@ -33,6 +33,7 @@
             <child>Promo_PromotionTree_Conditions_Menu_Action_CreateDateCondition</child>
             <child>Promo_PromotionTree_Conditions_Menu_Action_CreateTimeCondition</child>
             <child>Promo_PromotionTree_Conditions_Menu_Action_CreateDocTotalCondition</child>
+            <child>Promo_PromotionTree_Conditions_Menu_Action_CreateProductTotalCondition</child>
             <child>Promo_PromotionTree_Conditions_Menu_Action_Delete</child>
         </childs>
     </definition>

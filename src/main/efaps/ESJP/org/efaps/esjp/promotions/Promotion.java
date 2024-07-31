@@ -46,7 +46,7 @@ public class Promotion
 
             final File file = new FileUtil().getFile(promotion.getName(), "json");
             try {
-                objectMapper.writeValue(file, promotion);
+                objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, promotion);
                 if (file != null) {
                     ret.put(ReturnValues.VALUES, file);
                     ret.put(ReturnValues.TRUE, true);
