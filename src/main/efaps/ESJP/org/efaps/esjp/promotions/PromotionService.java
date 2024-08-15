@@ -57,6 +57,7 @@ import org.efaps.promotionengine.action.Strategy;
 import org.efaps.promotionengine.condition.DateCondition;
 import org.efaps.promotionengine.condition.DocTotalCondition;
 import org.efaps.promotionengine.condition.ICondition;
+import org.efaps.promotionengine.condition.MaxCondition;
 import org.efaps.promotionengine.condition.Operator;
 import org.efaps.promotionengine.condition.ProductFamilyCondition;
 import org.efaps.promotionengine.condition.ProductFamilyConditionEntry;
@@ -326,6 +327,11 @@ public class PromotionService
                 while (prodEval.next()) {
                     ((ProductTotalCondition) condition).addProduct(prodEval.get("prodOid"));
                 }
+            } else if (InstanceUtils.isType(eval.inst(), CIPromo.MaxCondition)) {
+                final var max = eval.<Integer>get(CIPromo.ConditionAbstract.Int1);
+                condition = new MaxCondition()
+                                .setMax(max)
+                                .setNote(eval.get(CIPromo.ConditionAbstract.Note));
             }
 
             if (container.equals(ConditionContainer.SOURCE)) {
