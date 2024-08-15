@@ -35,7 +35,7 @@ public class Promotion
 {
     private static final Logger LOG = LoggerFactory.getLogger(Promotion.class);
 
-    public Return ceateJson(final Parameter _parameter)
+    public Return createJson(final Parameter _parameter)
         throws EFapsException
     {
         final var ret = new Return();

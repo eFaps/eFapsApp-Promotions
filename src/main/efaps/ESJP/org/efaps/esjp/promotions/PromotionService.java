@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.program.esjp.EFapsApplication;
@@ -201,7 +202,8 @@ public class PromotionService
                                 .setEntryOperator(EnumUtils.getEnum(
                                                 org.efaps.promotionengine.condition.EntryOperator.class,
                                                 entryOperator.name()))
-                                .setAllowTargetSameAsSource(eval.get(CIPromo.ConditionAbstract.Boolean1))
+                                .setAllowTargetSameAsSource(BooleanUtils
+                                                .toBoolean(eval.<Boolean>get(CIPromo.ConditionAbstract.Boolean1)))
                                 .setProducts(prodOids)
                                 .setNote(eval.get(CIPromo.ConditionAbstract.Note));
             } else if (InstanceUtils.isType(eval.inst(), CIPromo.ProductFamilyCondition)) {
@@ -235,7 +237,8 @@ public class PromotionService
                                 .setEntryOperator(EnumUtils.getEnum(
                                                 org.efaps.promotionengine.condition.EntryOperator.class,
                                                 entryOperator.name()))
-                                .setAllowTargetSameAsSource(eval.get(CIPromo.ConditionAbstract.Boolean1))
+                                .setAllowTargetSameAsSource(BooleanUtils
+                                                .toBoolean(eval.<Boolean>get(CIPromo.ConditionAbstract.Boolean1)))
                                 .setEntries(entries)
                                 .setNote(eval.get(CIPromo.ConditionAbstract.Note));
             } else if (InstanceUtils.isType(eval.inst(), CIPromo.StoreCondition)) {
@@ -268,7 +271,8 @@ public class PromotionService
                                 .setEntryOperator(EnumUtils.getEnum(
                                                 org.efaps.promotionengine.condition.EntryOperator.class,
                                                 entryOperator.name()))
-                                .setAllowTargetSameAsSource(eval.get(CIPromo.ConditionAbstract.Boolean1))
+                                .setAllowTargetSameAsSource(BooleanUtils
+                                                .toBoolean(eval.<Boolean>get(CIPromo.ConditionAbstract.Boolean1)))
                                 .setProducts(prodOids)
                                 .setNote(eval.get(CIPromo.ConditionAbstract.Note));
             } else if (InstanceUtils.isType(eval.inst(), CIPromo.DateCondition)) {

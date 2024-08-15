@@ -31,7 +31,7 @@
         <target>
             <execute
                 program="org.efaps.esjp.promotions.Promotion"
-                method="ceateJson" />
+                method="createJson" />
         </target>
         <property name="TargetShowFile">true</property>
         <property name="Target">hidden</property>
