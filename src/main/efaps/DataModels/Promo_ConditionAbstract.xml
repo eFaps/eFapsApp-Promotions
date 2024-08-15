@@ -70,11 +70,18 @@
             <sqltable>Promo_ConditionsSQLTable</sqltable>
             <sqlcolumn>INT1</sqlcolumn>
         </attribute>
-         <attribute>
+        <attribute>
             <name>Decimal1</name>
             <type>Decimal</type>
             <sqltable>Promo_ConditionsSQLTable</sqltable>
             <sqlcolumn>DEC1</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>Boolean1</name>
+            <type>Boolean</type>
+            <sqltable>Promo_ConditionsSQLTable</sqltable>
+            <sqlcolumn>BOOL1</sqlcolumn>
+            <defaultvalue>0</defaultvalue>
         </attribute>
         <attribute>
             <name>Creator</name>

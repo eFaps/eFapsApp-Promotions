@@ -25,21 +25,8 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Promo_ProductsEQLCondition</name>
-        <parent>Promo_ConditionAbstract</parent>
-        <attribute>
-            <name>EntryOperator</name>
-            <type>Enum</type>
-            <className>org.efaps.esjp.promotions.utils.Promotions$EntryOperator</className>
-            <sqltable>Promo_ConditionsSQLTable</sqltable>
-            <sqlcolumn>INT1</sqlcolumn>
-        </attribute>
-        <attribute>
-            <name>Quantity</name>
-            <type>Decimal</type>
-            <sqltable>Promo_ConditionsSQLTable</sqltable>
-            <sqlcolumn>DEC1</sqlcolumn>
-        </attribute>
-       <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanCache"
+        <parent>Promo_ProductConditionAbstract</parent>
+        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanCache"
             name="Promo_ProductsEQLCondition.INSERT_POST" event="INSERT_POST">
             <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
         </trigger>

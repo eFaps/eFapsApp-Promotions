@@ -22,8 +22,10 @@ import java.time.OffsetTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -175,7 +177,8 @@ public class PromotionService
                         .attribute(CIPromo.ConditionAbstract.PromotionLink).eq(promoInst)
                         .select()
                         .attribute(CIPromo.ConditionAbstract.ConditionContainer, CIPromo.ConditionAbstract.Note,
-                                        CIPromo.ConditionAbstract.Int1, CIPromo.ConditionAbstract.Decimal1)
+                                        CIPromo.ConditionAbstract.Int1, CIPromo.ConditionAbstract.Decimal1,
+                                        CIPromo.ConditionAbstract.Boolean1)
                         .evaluate();
         while (eval.next()) {
             ICondition condition = null;
@@ -188,7 +191,7 @@ public class PromotionService
                                 .select()
                                 .linkto(CIPromo.ProductsCondition2ProductAbstract.ToLink).oid().as("prodOid")
                                 .evaluate();
-                final var prodOids = new ArrayList<String>();
+                final var prodOids = new HashSet<String>();
                 while (prodEval.next()) {
                     prodOids.add(prodEval.get("prodOid"));
                 }
@@ -197,7 +200,8 @@ public class PromotionService
                                 .setEntryOperator(EnumUtils.getEnum(
                                                 org.efaps.promotionengine.condition.EntryOperator.class,
                                                 entryOperator.name()))
-                                .setEntries(prodOids)
+                                .setAllowTargetSameAsSource(eval.get(CIPromo.ConditionAbstract.Boolean1))
+                                .setProducts(prodOids)
                                 .setNote(eval.get(CIPromo.ConditionAbstract.Note));
             } else if (InstanceUtils.isType(eval.inst(), CIPromo.ProductFamilyCondition)) {
                 final var ordinal = eval.<Integer>get(CIPromo.ConditionAbstract.Int1);
@@ -230,6 +234,7 @@ public class PromotionService
                                 .setEntryOperator(EnumUtils.getEnum(
                                                 org.efaps.promotionengine.condition.EntryOperator.class,
                                                 entryOperator.name()))
+                                .setAllowTargetSameAsSource(eval.get(CIPromo.ConditionAbstract.Boolean1))
                                 .setEntries(entries)
                                 .setNote(eval.get(CIPromo.ConditionAbstract.Note));
             } else if (InstanceUtils.isType(eval.inst(), CIPromo.StoreCondition)) {
@@ -262,8 +267,8 @@ public class PromotionService
                                 .setEntryOperator(EnumUtils.getEnum(
                                                 org.efaps.promotionengine.condition.EntryOperator.class,
                                                 entryOperator.name()))
-
-                                .setEntries(prodOids)
+                                .setAllowTargetSameAsSource(eval.get(CIPromo.ConditionAbstract.Boolean1))
+                                .setProducts(prodOids)
                                 .setNote(eval.get(CIPromo.ConditionAbstract.Note));
             } else if (InstanceUtils.isType(eval.inst(), CIPromo.DateCondition)) {
                 condition = new DateCondition().setNote(eval.get(CIPromo.ConditionAbstract.Note));
@@ -442,11 +447,11 @@ public class PromotionService
         return mapper;
     }
 
-    public static List<String> evalProductOids4EQL(final Instance conditionInstance)
+    public static Set<String> evalProductOids4EQL(final Instance conditionInstance)
         throws EFapsException
     {
         LOG.debug("Evaluation ProductOid for EQL {}", conditionInstance.getOid());
-        final var prodOids = new ArrayList<String>();
+        final var prodOids = new HashSet<String>();
         final var properties = Promotions.EQL_ATTRDEF.get();
         final var types = PropertiesUtil.analyseProperty(properties, "Type", 0);
         LOG.debug("  types: {}", types);

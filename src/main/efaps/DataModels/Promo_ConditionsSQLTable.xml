@@ -33,6 +33,7 @@
             <column name="NOTE"                         type="STRING_SHORT" length="1024"/>
             <column name="INT1"                         type="INTEGER"/>
             <column name="DEC1"                         type="DECIMAL" length="8" scale="4"/>
+            <column name="BOOL1"                        type="BOOLEAN"/>
             <column name="CREATOR"      not-null="true" type="INTEGER"/>
             <column name="CREATED"      not-null="true" type="DATETIME"/>
             <column name="MODIFIER"     not-null="true" type="INTEGER"/>
