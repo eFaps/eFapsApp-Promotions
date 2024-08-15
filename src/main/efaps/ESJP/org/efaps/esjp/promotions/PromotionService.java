@@ -67,6 +67,7 @@ import org.efaps.promotionengine.promotion.Promotion;
 import org.efaps.util.EFapsException;
 import org.efaps.util.cache.CacheReloadException;
 import org.efaps.util.cache.InfinispanCache;
+import org.infinispan.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -533,15 +534,21 @@ public class PromotionService
     public static void cachePromotions(final List<Promotion> promotions)
         throws CacheReloadException, EFapsException
     {
-
-        final var cache = InfinispanCache.get().<Long, String>getCache(CACHENAME);
         try {
             final var json = ValueUtils.getObjectMapper().writeValueAsString(promotions);
             final var companyId = Context.getThreadContext().getCompany().getId();
             LOG.debug("Caching Promotions for {}", companyId);
-            cache.put(companyId, json, 1, TimeUnit.HOURS);
+            getCache().put(companyId, json, 1, TimeUnit.HOURS);
         } catch (final JsonProcessingException e) {
             LOG.error("Catched", e);
         }
+    }
+
+    private static Cache<Long, String> getCache()
+    {
+        if (!InfinispanCache.get().exists(CACHENAME)) {
+            InfinispanCache.get().initCache(CACHENAME);
+        }
+        return InfinispanCache.get().<Long, String>getCache(CACHENAME);
     }
 }

@@ -32,7 +32,7 @@
             <column name="ASSOCID"  not-null="true" type="INTEGER" />
             <column name="STATUS"   not-null="true" type="INTEGER" />
             <column name="NAME"     not-null="true" type="STRING_SHORT" length="255"/>
-            <column name="DESCR"                    type="STRING_SHORT" length="255"/>
+            <column name="DESCR"                    type="STRING_SHORT" length="512"/>
             <column name="LABEL"                    type="STRING_SHORT" length="255"/>
             <column name="PRIORITY"                 type="INTEGER"/>
             <column name="STARTDD"                  type="DATETIME"/>
