@@ -23,32 +23,27 @@ import java.util.Map;
 
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
-import org.efaps.admin.ui.AbstractUserInterfaceObject;
-import org.efaps.admin.ui.field.Field;
 import org.efaps.db.Instance;
 import org.efaps.eql.EQL;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.ci.CIPromo;
 import org.efaps.esjp.db.InstanceUtils;
 import org.efaps.esjp.promotions.PromotionService;
-import org.efaps.esjp.ui.rest.provider.ITableProvider;
+import org.efaps.esjp.ui.rest.provider.AbstractTableProvider;
 import org.efaps.util.EFapsException;
 
 @EFapsUUID("1aa3763e-0e4d-4190-9c83-459d726bf2a5")
 @EFapsApplication("eFapsApp-Promotions")
 public class ProductsEQLConditionPreviewProvider
-    implements ITableProvider
+    extends AbstractTableProvider
 {
 
     @Override
-    public Collection<Map<String, ?>> getValues(final AbstractUserInterfaceObject cmd,
-                                                final List<Field> fields,
-                                                final Map<String, String> properties,
-                                                final String oid)
+    public Collection<Map<String, ?>> getValues()
         throws EFapsException
     {
         final List<Map<String, ?>> values = new ArrayList<>();
-        final var conditionInstance = Instance.get(oid);
+        final var conditionInstance = Instance.get(getOid());
         if (InstanceUtils.isType(conditionInstance, CIPromo.ProductsEQLCondition)) {
             final var prodOids = PromotionService.evalProductOids4EQL(conditionInstance);
             if (!prodOids.isEmpty()) {
