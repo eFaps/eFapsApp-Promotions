@@ -51,6 +51,20 @@
             <sqlcolumn>PROMOID</sqlcolumn>
         </attribute>
         <attribute>
+            <name>PromotionLink</name>
+            <type>Link</type>
+            <typelink>Promo_PromotionAbstract</typelink>
+            <sqltable>Promo_ConditionsSQLTable</sqltable>
+            <sqlcolumn>PROMOID</sqlcolumn>
+        </attribute>
+        <attribute>
+            <name>ParentConditionLink</name>
+            <type>Link</type>
+            <typelink>Promo_AggregationConditionAbstract</typelink>
+            <sqltable>Promo_ConditionsSQLTable</sqltable>
+            <sqlcolumn>PARENTCONDID</sqlcolumn>
+        </attribute>
+        <attribute>
             <name>ConditionContainer</name>
             <type>Enum</type>
             <className>org.efaps.esjp.promotions.utils.Promotions$ConditionContainer</className>
