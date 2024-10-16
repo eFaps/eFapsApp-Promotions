@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+
+    Copyright © 2003 - 2024 The eFaps Team (-)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
+    <uuid>fa90dcd4-7374-449b-9e40-cef028d83acb</uuid>
+    <file-application>eFapsApp-Promotions</file-application>
+    <definition>
+        <version-expression>(version==latest)</version-expression>
+        <name>Promo_ProductsConditionTree_Products_Menu_Action_ImportFromCSV</name>
+        <target>
+            <module>Promo_ProductsConditionTree_Products_CSVImportModule</module>
+            <execute program="org.efaps.esjp.promotions.ImportProductsFromCSV"/>
+            <trigger event="UI_ACCESSCHECK" method="configCheck"
+                name="Promo_ProductsConditionTree_Products_Menu_Action_ImportFromCSV.UI_ACCESSCHECK"
+                program="org.efaps.esjp.admin.access.AccessCheck4UI">
+                <property name="SystemConfig">e3055a0d-6b3d-4d44-88df-a3042400260b</property>
+                <property name="Attribute">org.efaps.promotions.ProductsCondition.CSVImport.Activate</property>
+            </trigger>
+        </target>
+        <property name="Target">modal</property>
+        <property name="TargetMode">create</property>
+    </definition>
+</ui-command>

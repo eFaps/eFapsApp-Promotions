@@ -63,6 +63,12 @@ public class Promotions
                     .addDefaultValue("EngineRule", "PRIORITY")
                     .description("EngineRule=PRIORITY|MOSTDISCOUNT");
 
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute PRODCOND_CSV = new BooleanSysConfAttribute()
+                    .sysConfUUID(Promotions.SYSCONFUUID)
+                    .key(Promotions.BASE + "ProductsCondition.CSVImport.Activate")
+                    .description("Activate promotions.");
+
     public enum ConditionContainer implements IEnum
     {
 
