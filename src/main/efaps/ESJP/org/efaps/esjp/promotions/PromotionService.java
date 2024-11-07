@@ -66,6 +66,7 @@ import org.efaps.promotionengine.condition.ProductFamilyCondition;
 import org.efaps.promotionengine.condition.ProductFamilyConditionEntry;
 import org.efaps.promotionengine.condition.ProductTotalCondition;
 import org.efaps.promotionengine.condition.ProductsCondition;
+import org.efaps.promotionengine.condition.StackCondition;
 import org.efaps.promotionengine.condition.StoreCondition;
 import org.efaps.promotionengine.condition.TimeCondition;
 import org.efaps.promotionengine.dto.PromotionInfoDto;
@@ -351,6 +352,9 @@ public class PromotionService
             condition = new MaxCondition()
                             .setMax(max)
                             .setNote(eval.get(CIPromo.ConditionAbstract.Note));
+        } else if (InstanceUtils.isType(eval.inst(), CIPromo.StackCondition)) {
+            condition = new StackCondition()
+                            .setNote(eval.get(CIPromo.StackCondition.Note));
         } else if (InstanceUtils.isType(eval.inst(), CIPromo.OrCondition)) {
             final var childEval = EQL.builder().print().query(CIPromo.ConditionAbstract)
                             .where()
@@ -439,29 +443,30 @@ public class PromotionService
                 while (posEval.next()) {
                     if (dto.getDetails().size() > idx) {
                         final var detail = dto.getDetails().get(idx);
-                        final var promoInst = Instance.get(detail.getPromotionOid());
-
-                        final String promotion;
-                        if (oid2promotion.containsKey(detail.getPromotionOid())) {
-                            promotion = objectMapper.writeValueAsString(oid2promotion.get(detail.getPromotionOid()));
-                        } else {
-                            promotion = promotions.stream().collect(Collectors.joining("\n"));
-                        }
-                        if (InstanceUtils.isKindOf(promoInst, CIPromo.PromotionAbstract)) {
-                            EQL.builder().insert(ciRelPosType)
-                                            .set(CIPromo.Promotion2PositionAbstract.FromLink, promoInst)
-                                            .set(CIPromo.Promotion2PositionAbstract.ToLinkAbstract, posEval.inst())
-                                            .set(CIPromo.Promotion2PositionAbstract.PromoInfo, promoInfo)
-                                            .set(CIPromo.Promotion2PositionAbstract.Promotion, promotion)
-                                            .set(CIPromo.Promotion2PositionAbstract.NetUnitDiscount,
-                                                            detail.getNetUnitDiscount())
-                                            .set(CIPromo.Promotion2PositionAbstract.NetDiscount,
-                                                            detail.getNetDiscount())
-                                            .set(CIPromo.Promotion2PositionAbstract.CrossUnitDiscount,
-                                                            detail.getCrossUnitDiscount())
-                                            .set(CIPromo.Promotion2PositionAbstract.CrossDiscount,
-                                                            detail.getCrossDiscount())
-                                            .execute();
+                        for (final var promotionOid : detail.getPromotionOids()) {
+                            final var promoInst = Instance.get(promotionOid);
+                            final String promotion;
+                            if (oid2promotion.containsKey(promotionOid)) {
+                                promotion = objectMapper.writeValueAsString(oid2promotion.get(promotionOid));
+                            } else {
+                                promotion = promotions.stream().collect(Collectors.joining("\n"));
+                            }
+                            if (InstanceUtils.isKindOf(promoInst, CIPromo.PromotionAbstract)) {
+                                EQL.builder().insert(ciRelPosType)
+                                                .set(CIPromo.Promotion2PositionAbstract.FromLink, promoInst)
+                                                .set(CIPromo.Promotion2PositionAbstract.ToLinkAbstract, posEval.inst())
+                                                .set(CIPromo.Promotion2PositionAbstract.PromoInfo, promoInfo)
+                                                .set(CIPromo.Promotion2PositionAbstract.Promotion, promotion)
+                                                .set(CIPromo.Promotion2PositionAbstract.NetUnitDiscount,
+                                                                detail.getNetUnitDiscount())
+                                                .set(CIPromo.Promotion2PositionAbstract.NetDiscount,
+                                                                detail.getNetDiscount())
+                                                .set(CIPromo.Promotion2PositionAbstract.CrossUnitDiscount,
+                                                                detail.getCrossUnitDiscount())
+                                                .set(CIPromo.Promotion2PositionAbstract.CrossDiscount,
+                                                                detail.getCrossDiscount())
+                                                .execute();
+                            }
                         }
                     }
                     idx++;

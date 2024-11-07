@@ -35,6 +35,7 @@
             <child>Promo_PromotionTree_Conditions_Menu_Action_CreateDocTotalCondition</child>
             <child>Promo_PromotionTree_Conditions_Menu_Action_CreateProductTotalCondition</child>
             <child>Promo_PromotionTree_Conditions_Menu_Action_CreateOrCondition</child>
+            <child>Promo_PromotionTree_Conditions_Menu_Action_CreateStackCondition</child>
             <child>Promo_PromotionTree_Conditions_Menu_Action_Delete</child>
         </childs>
     </definition>
