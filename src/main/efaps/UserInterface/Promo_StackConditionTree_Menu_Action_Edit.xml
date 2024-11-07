@@ -17,25 +17,16 @@
 -->
 <ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>9af8e57f-2c62-4e24-992e-cd9a682b01ab</uuid>
+    <uuid>6c70a96c-21a0-4c9b-8b1a-603a63301c17</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_PromotionTree_Conditions_Menu_Action_CreateStackCondition</name>
+        <name>Promo_StackConditionTree_Menu_Action_Edit</name>
         <target>
             <form>Promo_StackConditionForm</form>
-            <execute program="org.efaps.esjp.common.uiform.Create"/>
-            <trigger event="UI_ACCESSCHECK" method="configCheck"
-                name="Promo_PromotionTree_Conditions_Menu_Action_CreateStackCondition.UI_ACCESSCHECK"
-                program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <property name="SystemConfig">e3055a0d-6b3d-4d44-88df-a3042400260b</property>
-                <property name="Attribute">org.efaps.promotions.StackCondition.Activate</property>
-            </trigger>
+            <execute program="org.efaps.esjp.common.uiform.Edit"/>
         </target>
         <property name="Target">modal</property>
-        <property name="TargetCreateType">Promo_StackCondition</property>
-        <property name="TargetConnectAttribute">Promo_ConditionAbstract/PromotionLink</property>
-        <property name="TargetMode">create</property>
-        <property name="TargetDefaultMenu">none</property>
+        <property name="TargetMode">edit</property>
     </definition>
 </ui-command>
