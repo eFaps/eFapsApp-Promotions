@@ -23,6 +23,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.efaps.admin.event.Parameter;
+import org.efaps.admin.event.Return;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
@@ -151,4 +153,10 @@ public class ImportProductsFromCSV
         }
     }
 
+    // to prevent an error in the log
+    public Return execute(final Parameter _parameter)
+        throws EFapsException
+    {
+        return null;
+    }
 }
