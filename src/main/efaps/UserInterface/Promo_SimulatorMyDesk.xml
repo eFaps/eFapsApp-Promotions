@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 
     Copyright © 2003 - 2024 The eFaps Team (-)
 
@@ -16,26 +15,16 @@
     limitations under the License.
 
 -->
-
-<ui-menu xmlns="http://www.efaps.org/xsd"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>20f9f6bf-f77a-4abb-b76c-024e0d74ca26</uuid>
+    <uuid>fa25b1eb-068c-4da5-b5b4-345c6db038b2</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_MyDesk</name>
+        <name>Promo_SimulatorMyDesk</name>
         <target>
-            <trigger event="UI_ACCESSCHECK" method="configCheck"
-                name="Promo_MyDesk.UI_ACCESSCHECK"
-                program="org.efaps.esjp.admin.access.AccessCheck4UI">
-                <property name="SystemConfig">e3055a0d-6b3d-4d44-88df-a3042400260b</property>
-                <property name="Attribute">org.efaps.promotions.Activate</property>
-            </trigger>
+            <module>Promo_SimulatorModule</module>
         </target>
-        <childs>
-            <child>Promo_PromotionMyDesk</child>
-            <child>Promo_SimulatorMyDesk</child>
-        </childs>
+        <property name="Target">content</property>
     </definition>
-</ui-menu>
+</ui-command>

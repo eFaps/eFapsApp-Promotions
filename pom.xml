@@ -69,22 +69,16 @@
         <url>http://www.efaps.org</url>
     </organization>
 
-    
-
     <issueManagement>
         <system>eFaps Issues on Google Code</system>
         <url>http://issues.efaps.org</url>
     </issueManagement>
-
-    
 
     <scm>
         <connection>scm:svn:http://efaps.googlecode.com/svn/eFaps-WebApp-Install</connection>
         <developerConnection>scm:svn:https://efaps.googlecode.com/svn/eFaps-WebApp-Install</developerConnection>
         <url>http://efaps.googlecode.com/svn/eFaps-WebApp-Install</url>
     </scm>
-
-    
 
     <distributionManagement>
         <site>
@@ -129,13 +123,13 @@
                 <configuration>
                     <userName>Administrator</userName>
                     <passWord>Administrator</passWord>
-                    
+
 
                     <count>${count}</count>
                     <ciName>Promo</ciName>
                 </configuration>
                 <dependencies>
-                    
+
 
                     <dependency>
                         <groupId>org.apache.commons</groupId>
