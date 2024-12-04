@@ -73,10 +73,11 @@ public class SimulatorController
         //
         final var productEval = EQL.builder().print().query(CIProducts.ProductStandart)
                         .where()
-                        .attribute(CIProducts.ProductStandart.Name).ilike(term).or()
-                        .attribute(CIProducts.ProductStandart.Description).ilike(term)
+                        .attribute(CIProducts.ProductStandart.Name).ilike(term + '%').or()
+                        .attribute(CIProducts.ProductStandart.Description).ilike(term + '%')
                         .select()
                         .attribute(CIProducts.ProductStandart.Name, CIProducts.ProductStandart.Description)
+                        .limit(100)
                         .evaluate();
         while (productEval.next()) {
             dtos.add(SimulatorProductDto.builder()
