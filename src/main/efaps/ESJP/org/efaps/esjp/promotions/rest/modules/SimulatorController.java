@@ -16,6 +16,8 @@
 package org.efaps.esjp.promotions.rest.modules;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,13 +34,16 @@ import org.efaps.eql.EQL;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.parameter.ParameterUtil;
 import org.efaps.esjp.promotions.PromotionService;
+import org.efaps.esjp.promotions.utils.Promotions;
 import org.efaps.esjp.sales.CalculatorConfig;
 import org.efaps.esjp.sales.PriceUtil;
 import org.efaps.esjp.sales.tax.Tax;
 import org.efaps.esjp.sales.tax.TaxCat_Base;
+import org.efaps.promotionengine.PromotionsConfiguration;
 import org.efaps.promotionengine.api.IDocument;
 import org.efaps.promotionengine.pojo.Document;
 import org.efaps.promotionengine.pojo.Position;
+import org.efaps.promotionengine.process.EngineRule;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -89,7 +94,6 @@ public class SimulatorController
         return Response.ok(dtos).build();
     }
 
-
     @Path("/promotions/{oid}")
     @GET
     @Produces({ MediaType.APPLICATION_JSON })
@@ -112,9 +116,19 @@ public class SimulatorController
         final var taxMap = new HashMap<String, Tax>();
         final var document = new Document();
         int idx = 0;
+
+        // for price just use midday
+        DateTime jodaDateTime;
+        if (dto.getDate() != null) {
+            jodaDateTime = new DateTime(dto.getDate().getYear(), dto.getDate().getMonthValue(),
+                            dto.getDate().getDayOfMonth(), 12, 0);
+        } else {
+            jodaDateTime = DateTime.now();
+        }
         for (final var pos : dto.getItems()) {
             final var prodInst = Instance.get(pos.getProductOid());
-            final var prodPrice = new PriceUtil().getPrice(parameter, DateTime.now(), prodInst,
+
+            final var prodPrice = new PriceUtil().getPrice(parameter, jodaDateTime, prodInst,
                             CIProducts.ProductPricelistRetail.uuid, "DefaultPosition", false);
 
             final var prodEval = EQL.builder()
@@ -148,17 +162,29 @@ public class SimulatorController
                             .setProductOid(pos.getProductOid())
                             .setQuantity(pos.getQuantity()));
         }
-        final var result = calculate(document);
+        final var result = calculate(document, dto.getDate());
         LOG.info("result: {}", result);
 
         return Response.ok(result).build();
     }
 
-    public IDocument calculate(final IDocument document) throws EFapsException
+    public IDocument calculate(final IDocument document,
+                               final LocalDate localDate)
+        throws EFapsException
     {
         final var calculator = new org.efaps.promotionengine.Calculator(getConfig());
         final var promotions = new PromotionService().getPromotions();
-        calculator.calc(document, promotions);
+        final var promoConfig = new PromotionsConfiguration();
+        if (localDate != null) {
+            promoConfig.setEvaluationDateTime(
+                            OffsetDateTime.now().withYear(localDate.getYear()).withMonth(localDate.getMonthValue())
+                                            .withDayOfMonth(localDate.getDayOfMonth()));
+        }
+        final var rule = (String) Promotions.ENGINE_CONFIG.get().getOrDefault("EngineRule", "PRIORITY");
+        promoConfig.setEngineRule(EngineRule.valueOf(rule));
+        LOG.info("Calculating with EngineRule: {} - DateTime: {}", promoConfig.getEngineRule(),
+                        promoConfig.getEvaluationDateTime());
+        calculator.calc(document, promotions, null, promoConfig);
         return document;
     }
 

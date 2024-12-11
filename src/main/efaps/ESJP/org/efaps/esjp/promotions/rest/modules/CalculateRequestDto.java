@@ -15,6 +15,7 @@
  */
 package org.efaps.esjp.promotions.rest.modules;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,14 +33,22 @@ public class CalculateRequestDto
 
     private final List<CalculateRequestPositionDto> items;
 
+    private final LocalDate date;
+
     private CalculateRequestDto(Builder builder)
     {
         this.items = builder.items;
+        this.date = builder.date;
     }
 
     public List<CalculateRequestPositionDto> getItems()
     {
         return items;
+    }
+
+    public LocalDate getDate()
+    {
+        return date;
     }
 
     @Override
@@ -57,6 +66,7 @@ public class CalculateRequestDto
     {
 
         private List<CalculateRequestPositionDto> items = Collections.emptyList();
+        private LocalDate date;
 
         private Builder()
         {
@@ -65,6 +75,12 @@ public class CalculateRequestDto
         public Builder withItems(List<CalculateRequestPositionDto> items)
         {
             this.items = items;
+            return this;
+        }
+
+        public Builder withDate(LocalDate date)
+        {
+            this.date = date;
             return this;
         }
 
