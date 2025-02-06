@@ -559,10 +559,9 @@ public class PromotionService
         throws CacheReloadException, EFapsException
     {
         List<Promotion> ret = null;
-        final var cache = InfinispanCache.get().<Long, String>getCache(CACHENAME);
         final var companyId = Context.getThreadContext().getCompany().getId();
         LOG.debug("Retreiving Promotions for {} from {}", companyId, CACHENAME);
-        final var json = cache.get(companyId);
+        final var json = getCache().get(companyId);
         if (json != null) {
             try {
                 ret = ValueUtils.getObjectMapper().readValue(json, ValueUtils.getObjectMapper().getTypeFactory()

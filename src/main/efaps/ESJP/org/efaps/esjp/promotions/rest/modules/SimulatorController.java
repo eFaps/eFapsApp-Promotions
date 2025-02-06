@@ -44,6 +44,7 @@ import org.efaps.promotionengine.api.IDocument;
 import org.efaps.promotionengine.pojo.Document;
 import org.efaps.promotionengine.pojo.Position;
 import org.efaps.promotionengine.process.EngineRule;
+import org.efaps.promotionengine.promotion.Promotion;
 import org.efaps.util.EFapsException;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -101,6 +102,16 @@ public class SimulatorController
         throws EFapsException
     {
         final var promotion = new PromotionService().getPromotion(Instance.get(oid));
+        return Response.ok(promotion).build();
+    }
+
+    @Path("/promotions")
+    @GET
+    @Produces({ MediaType.APPLICATION_JSON })
+    public Response getPromotions()
+        throws EFapsException
+    {
+        final var promotion = new PromotionService().getPromotions();
         return Response.ok(promotion).build();
     }
 
@@ -162,18 +173,29 @@ public class SimulatorController
                             .setProductOid(pos.getProductOid())
                             .setQuantity(pos.getQuantity()));
         }
-        final var result = calculate(document, dto.getDate());
+        final var result = calculate(document, dto.getDate(), dto.getPromotionOids());
         LOG.info("result: {}", result);
 
         return Response.ok(result).build();
     }
 
     public IDocument calculate(final IDocument document,
-                               final LocalDate localDate)
+                               final LocalDate localDate,
+                               final List<String> promotionOids)
         throws EFapsException
     {
         final var calculator = new org.efaps.promotionengine.Calculator(getConfig());
-        final var promotions = new PromotionService().getPromotions();
+        final List<Promotion> promotions;
+        final var promotionService = new PromotionService();
+        if (promotionOids != null) {
+            promotions = new ArrayList<>();
+            for (final var promotionOid : promotionOids) {
+                promotions.add(promotionService.getPromotion(Instance.get(promotionOid)));
+            }
+        } else {
+            promotions = promotionService.getPromotions();
+        }
+
         final var promoConfig = new PromotionsConfiguration();
         if (localDate != null) {
             promoConfig.setEvaluationDateTime(
