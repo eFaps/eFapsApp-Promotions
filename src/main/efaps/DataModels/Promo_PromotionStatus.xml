@@ -26,6 +26,9 @@
         <version-expression>(version==latest)</version-expression>
         <name>Promo_PromotionStatus</name>
         <parent>Admin_DataModel_StatusAbstract</parent>
+        <status key="Draft">
+            <description>Backend is in draft.</description>
+        </status>
         <status key="Active">
             <description>Backend is active.</description>
         </status>

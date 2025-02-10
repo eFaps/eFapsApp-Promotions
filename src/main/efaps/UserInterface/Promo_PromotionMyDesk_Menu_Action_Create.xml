@@ -29,7 +29,7 @@
             <form>Promo_PromotionForm</form>
             <execute program="org.efaps.esjp.common.uiform.Create" >
                 <property name="StatusGroup">Promo_PromotionStatus</property>
-                <property name="Status">Inactive</property>
+                <property name="Status">Draft</property>
             </execute>
         </target>
         <property name="Target">modal</property>

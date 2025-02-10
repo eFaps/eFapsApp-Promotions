@@ -100,6 +100,19 @@ public class PromotionService
         return promotions.isEmpty() ? null : promotions.get(0);
     }
 
+    public List<Promotion> getPromotions4Simulator()
+        throws EFapsException
+    {
+        LOG.debug("Getting Promotions");
+        final Print promoEval = EQL.builder().print().query(CIPromo.PromotionAbstract)
+                        .where()
+                        .attribute(CIPromo.PromotionAbstract.StatusAbstract)
+                        .in(CIPromo.PromotionStatus.Draft, CIPromo.PromotionStatus.Active)
+                        .select();
+        return evalPromotions(promoEval);
+    }
+
+
     public List<Promotion> getPromotions()
         throws EFapsException
     {

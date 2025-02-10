@@ -111,7 +111,7 @@ public class SimulatorController
     public Response getPromotions()
         throws EFapsException
     {
-        final var promotion = new PromotionService().getPromotions();
+        final var promotion = new PromotionService().getPromotions4Simulator();
         return Response.ok(promotion).build();
     }
 
