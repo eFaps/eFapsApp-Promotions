@@ -95,12 +95,14 @@ public class PromotionService
     private static final String CACHENAME = PromotionService.class.getName() + ".Cache";
 
     private static final String CACHEPREFIX = "ACTIVE";
+    private static final String CACHEPREFIX_CLEAN = CACHEPREFIX + "-CLEAN";
+    private static final String CACHEPREFIX_LOADING = CACHEPREFIX + "-LOADING";
 
     public Return cleanCache(final Parameter parameter)
         throws EFapsException
     {
         LOG.info("Clean cache");
-        getCache().put(evalCacheKey(CACHEPREFIX + "-CLEAN"), "true");
+        getCache().put(evalCacheKey(CACHEPREFIX_CLEAN), "true");
         return new Return();
     }
 
@@ -140,19 +142,19 @@ public class PromotionService
     public List<Promotion> getPromotions()
         throws EFapsException
     {
-        final var cacheKey = evalCacheKey(CACHEPREFIX);
-        LOG.info("Getting Promotions for {}", cacheKey);
-        var promotions = retrievePromotions(cacheKey);
-        if (promotions == null && !getCache().containsKey(evalCacheKey(CACHEPREFIX + "-LOADING"))) {
-            getCache().put(evalCacheKey(CACHEPREFIX + "-LOADING"), "true", 10, TimeUnit.MINUTES);
+
+        LOG.info("Getting Promotions");
+        var promotions = retrievePromotions();
+        if (promotions == null && !getCache().containsKey(evalCacheKey(CACHEPREFIX_LOADING))) {
+            getCache().put(evalCacheKey(CACHEPREFIX_LOADING), "true", 10, TimeUnit.MINUTES);
             final Print promoEval = EQL.builder().print().query(CIPromo.PromotionAbstract)
                             .where()
                             .attribute(CIPromo.PromotionAbstract.StatusAbstract)
                             .eq(CIPromo.PromotionStatus.Active)
                             .select();
             promotions = evalPromotions(promoEval);
-            cachePromotions(promotions, cacheKey);
-            getCache().remove(evalCacheKey(CACHEPREFIX + "-LOADING"));
+            cachePromotions(promotions);
+            getCache().remove(evalCacheKey(CACHEPREFIX_LOADING));
         }
         return promotions;
     }
@@ -586,15 +588,16 @@ public class PromotionService
         return prodOids;
     }
 
-    private List<Promotion> retrievePromotions(final String cacheKey)
+    private List<Promotion> retrievePromotions()
         throws CacheReloadException, EFapsException
     {
         List<Promotion> ret = null;
-        final var clean = getCache().containsKey(evalCacheKey(cacheKey + "-CLEAN"));
-        final var loading = getCache().containsKey(evalCacheKey(cacheKey + "-LOADING"));
+        final var clean = getCache().containsKey(evalCacheKey(CACHEPREFIX_CLEAN));
+        final var loading = getCache().containsKey(evalCacheKey(CACHEPREFIX_LOADING));
+        final var cacheKey = evalCacheKey(CACHEPREFIX);
         LOG.info("Retreiving Promotions for {}, clean {}, loading {}", cacheKey, clean, loading);
         if (clean && !loading) {
-            getCache().remove(evalCacheKey(cacheKey + "-CLEAN"));
+            getCache().remove(evalCacheKey(CACHEPREFIX_CLEAN));
             return null;
         }
 
@@ -611,14 +614,14 @@ public class PromotionService
         return ret;
     }
 
-    private void cachePromotions(final List<Promotion> promotions,
-                                 final String cacheKey)
+    private void cachePromotions(final List<Promotion> promotions)
         throws CacheReloadException, EFapsException
     {
         try {
             final var json = ValueUtils.getObjectMapper().writeValueAsString(promotions);
+            final var cacheKey = evalCacheKey(CACHEPREFIX);
             LOG.info("Caching Promotions for {}", cacheKey);
-            getCache().put(cacheKey, json, 1, TimeUnit.HOURS);
+            getCache().put(cacheKey, json);
         } catch (final JsonProcessingException e) {
             LOG.error("Catched", e);
         }
