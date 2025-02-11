@@ -36,7 +36,6 @@ import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Return;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
-import org.efaps.ci.CIStatus;
 import org.efaps.ci.CIType;
 import org.efaps.db.Context;
 import org.efaps.db.Instance;
@@ -51,6 +50,7 @@ import org.efaps.esjp.ci.CIPromo;
 import org.efaps.esjp.ci.CISales;
 import org.efaps.esjp.common.properties.PropertiesUtil;
 import org.efaps.esjp.db.InstanceUtils;
+import org.efaps.esjp.promotions.rest.modules.PromotionHeadDto;
 import org.efaps.esjp.promotions.utils.Promotions;
 import org.efaps.esjp.promotions.utils.Promotions.ConditionContainer;
 import org.efaps.esjp.promotions.utils.Promotions.EntryOperator;
@@ -94,15 +94,13 @@ public class PromotionService
 
     private static final String CACHENAME = PromotionService.class.getName() + ".Cache";
 
-    private static final String CACHEPREFIX_ACTIVE = "ACTIVE";
-    private static final String CACHEPREFIX_SIM = "SIMULATOR";
+    private static final String CACHEPREFIX = "ACTIVE";
 
     public Return cleanCache(final Parameter parameter)
         throws EFapsException
     {
         LOG.info("Clean cache");
-        getCache().put(evalCacheKey(CACHEPREFIX_ACTIVE + "-CLEAN"), "true");
-        getCache().put(evalCacheKey(CACHEPREFIX_SIM + "-CLEAN"), "true");
+        getCache().put(evalCacheKey(CACHEPREFIX + "-CLEAN"), "true");
         return new Return();
     }
 
@@ -114,35 +112,47 @@ public class PromotionService
         return promotions.isEmpty() ? null : promotions.get(0);
     }
 
-    public List<Promotion> getPromotions4Simulator()
+    public List<PromotionHeadDto> getPromotionHeads()
         throws EFapsException
     {
-        return getPromotions(evalCacheKey(CACHEPREFIX_SIM), CIPromo.PromotionStatus.Active,
-                        CIPromo.PromotionStatus.Draft);
+        final List<PromotionHeadDto> ret = new ArrayList<>();
+        final var promoEval = EQL.builder().print().query(CIPromo.PromotionAbstract)
+                        .where()
+                        .attribute(CIPromo.PromotionAbstract.StatusAbstract)
+                        .in(CIPromo.PromotionStatus.Active, CIPromo.PromotionStatus.Draft)
+                        .select()
+                        .attribute(CIPromo.PromotionAbstract.Name, CIPromo.PromotionAbstract.Description,
+                                        CIPromo.PromotionAbstract.Label)
+                        .orderBy(CIPromo.PromotionAbstract.Name)
+                        .evaluate();
+
+        while (promoEval.next()) {
+            ret.add(PromotionHeadDto.builder()
+                            .withOid(promoEval.inst().getOid())
+                            .withName(promoEval.get(CIPromo.PromotionAbstract.Name))
+                            .withDescription(promoEval.get(CIPromo.PromotionAbstract.Description))
+                            .withLabel(promoEval.get(CIPromo.PromotionAbstract.Label))
+                            .build());
+        }
+        return ret;
     }
 
     public List<Promotion> getPromotions()
         throws EFapsException
     {
-        return getPromotions(evalCacheKey(CACHEPREFIX_ACTIVE), CIPromo.PromotionStatus.Active);
-    }
-
-    private List<Promotion> getPromotions(final String cacheKey,
-                                          final CIStatus... stati)
-        throws EFapsException
-    {
+        final var cacheKey = evalCacheKey(CACHEPREFIX);
         LOG.info("Getting Promotions for {}", cacheKey);
         var promotions = retrievePromotions(cacheKey);
-        if (promotions == null && !getCache().containsKey(evalCacheKey(cacheKey + "-LOADING"))) {
-            getCache().put(evalCacheKey(cacheKey + "-LOADING"), "true", 10, TimeUnit.MINUTES);
+        if (promotions == null && !getCache().containsKey(evalCacheKey(CACHEPREFIX + "-LOADING"))) {
+            getCache().put(evalCacheKey(CACHEPREFIX + "-LOADING"), "true", 10, TimeUnit.MINUTES);
             final Print promoEval = EQL.builder().print().query(CIPromo.PromotionAbstract)
                             .where()
                             .attribute(CIPromo.PromotionAbstract.StatusAbstract)
-                            .in(stati)
+                            .eq(CIPromo.PromotionStatus.Active)
                             .select();
             promotions = evalPromotions(promoEval);
             cachePromotions(promotions, cacheKey);
-            getCache().remove(evalCacheKey(cacheKey + "-LOADING"));
+            getCache().remove(evalCacheKey(CACHEPREFIX + "-LOADING"));
         }
         return promotions;
     }
