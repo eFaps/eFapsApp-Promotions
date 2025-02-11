@@ -26,17 +26,14 @@
         <version-expression>(version==latest)</version-expression>
         <name>Promo_ProductFamilyCondition</name>
         <parent>Promo_ProductConditionAbstract</parent>
-        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanCache"
+        <trigger program="org.efaps.esjp.promotions.PromotionService" method="cleanCache"
             name="Promo_ProductFamilyCondition.INSERT_POST" event="INSERT_POST">
-            <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
         </trigger>
-        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanCache"
+        <trigger program="org.efaps.esjp.promotions.PromotionService" method="cleanCache"
             name="Promo_ProductFamilyCondition.UPDATE_POST" event="UPDATE_POST">
-            <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
         </trigger>
-        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanCache"
+        <trigger program="org.efaps.esjp.promotions.PromotionService" method="cleanCache"
             name="Promo_ProductFamilyCondition.DELETE_POST" event="DELETE_POST">
-            <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
         </trigger>
     </definition>
 </datamodel-type>

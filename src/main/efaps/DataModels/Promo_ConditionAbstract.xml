@@ -51,13 +51,6 @@
             <sqlcolumn>PROMOID</sqlcolumn>
         </attribute>
         <attribute>
-            <name>PromotionLink</name>
-            <type>Link</type>
-            <typelink>Promo_PromotionAbstract</typelink>
-            <sqltable>Promo_ConditionsSQLTable</sqltable>
-            <sqlcolumn>PROMOID</sqlcolumn>
-        </attribute>
-        <attribute>
             <name>ParentConditionLink</name>
             <type>Link</type>
             <typelink>Promo_AggregationConditionAbstract</typelink>

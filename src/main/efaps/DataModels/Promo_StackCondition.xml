@@ -24,16 +24,13 @@
         <name>Promo_StackCondition</name>
         <parent>Promo_ConditionAbstract</parent>
         <trigger event="INSERT_POST" method="cleanCache" name="Promo_StackCondition.INSERT_POST"
-            program="org.efaps.esjp.common.cache.CacheUtils">
-            <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
+            program="org.efaps.esjp.promotions.PromotionService">
         </trigger>
         <trigger event="UPDATE_POST" method="cleanCache" name="Promo_StackCondition.UPDATE_POST"
-            program="org.efaps.esjp.common.cache.CacheUtils">
-            <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
+            program="org.efaps.esjp.promotions.PromotionService">
         </trigger>
         <trigger event="DELETE_POST" method="cleanCache" name="Promo_StackCondition.DELETE_POST"
-            program="org.efaps.esjp.common.cache.CacheUtils">
-            <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
+            program="org.efaps.esjp.promotions.PromotionService">
         </trigger>
     </definition>
 </datamodel-type>

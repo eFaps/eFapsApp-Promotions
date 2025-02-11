@@ -38,17 +38,14 @@
             <sqltable>Promo_ObjectSQLTable</sqltable>
             <sqlcolumn>INT3</sqlcolumn>
         </attribute>
-         <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanCache"
+         <trigger program="org.efaps.esjp.promotions.PromotionService" method="cleanCache"
             name="Promo_EQLAttributeDefinition.INSERT_POST" event="INSERT_POST">
-            <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
         </trigger>
-        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanCache"
+        <trigger program="org.efaps.esjp.promotions.PromotionService" method="cleanCache"
             name="Promo_EQLAttributeDefinition.UPDATE_POST" event="UPDATE_POST">
-            <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
         </trigger>
-        <trigger program="org.efaps.esjp.common.cache.CacheUtils" method="cleanCache"
+        <trigger program="org.efaps.esjp.promotions.PromotionService" method="cleanCache"
             name="Promo_EQLAttributeDefinition.DELETE_POST" event="DELETE_POST">
-            <property name="CacheName">org.efaps.esjp.promotions.PromotionService.Cache</property>
         </trigger>
     </definition>
 </datamodel-type>
