@@ -78,6 +78,12 @@
             <sqlcolumn>INT1</sqlcolumn>
         </attribute>
         <attribute>
+            <name>Int2</name>
+            <type>Integer</type>
+            <sqltable>Promo_ConditionsSQLTable</sqltable>
+            <sqlcolumn>INT2</sqlcolumn>
+        </attribute>
+        <attribute>
             <name>Decimal1</name>
             <type>Decimal</type>
             <sqltable>Promo_ConditionsSQLTable</sqltable>

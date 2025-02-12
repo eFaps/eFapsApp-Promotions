@@ -38,6 +38,7 @@
             <className>org.efaps.esjp.promotions.utils.Promotions$ActionStrategy</className>
             <sqltable>Promo_ActionsSQLTable</sqltable>
             <sqlcolumn>INT1</sqlcolumn>
+            <defaultvalue>2</defaultvalue>
         </attribute>
          <trigger program="org.efaps.esjp.promotions.PromotionService" method="cleanCache" index="1"
             name="Promo_PercentageDiscountAction.INSERT_POST.1" event="INSERT_POST">

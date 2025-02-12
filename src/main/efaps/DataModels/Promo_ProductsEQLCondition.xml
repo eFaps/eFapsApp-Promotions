@@ -26,6 +26,14 @@
         <version-expression>(version==latest)</version-expression>
         <name>Promo_ProductsEQLCondition</name>
         <parent>Promo_ProductConditionAbstract</parent>
+        <attribute>
+            <name>LogicalOperator</name>
+            <type>Enum</type>
+            <className>org.efaps.esjp.promotions.utils.Promotions$LogicalOperator</className>
+            <sqltable>Promo_ConditionsSQLTable</sqltable>
+            <sqlcolumn>INT2</sqlcolumn>
+            <defaultvalue>0</defaultvalue>
+        </attribute>
         <trigger program="org.efaps.esjp.promotions.PromotionService" method="cleanCache"
             name="Promo_ProductsEQLCondition.INSERT_POST" event="INSERT_POST">
         </trigger>

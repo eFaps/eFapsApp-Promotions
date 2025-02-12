@@ -23,7 +23,11 @@ import org.efaps.admin.event.Return;
 import org.efaps.admin.event.Return.ReturnValues;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.db.Instance;
+import org.efaps.eql.EQL;
+import org.efaps.esjp.ci.CIPromo;
 import org.efaps.esjp.common.file.FileUtil;
+import org.efaps.esjp.db.InstanceUtils;
 import org.efaps.esjp.ui.util.ValueUtils;
 import org.efaps.util.EFapsException;
 import org.slf4j.Logger;
@@ -33,6 +37,7 @@ import org.slf4j.LoggerFactory;
 @EFapsApplication("eFapsApp-Promotions")
 public class Promotion
 {
+
     private static final Logger LOG = LoggerFactory.getLogger(Promotion.class);
 
     public Return createJson(final Parameter _parameter)
@@ -57,4 +62,46 @@ public class Promotion
         }
         return ret;
     }
+
+    public Return activate(final Parameter parameter)
+        throws EFapsException
+    {
+        final var ret = new Return();
+        final var promotInst = parameter.getInstance();
+        if (validate(promotInst)) {
+            EQL.builder().update(promotInst).set(CIPromo.Promotion.Status, CIPromo.PromotionStatus.Active).execute();
+        }
+        return ret;
+    }
+
+    public boolean validate(final Instance promotInst)
+        throws EFapsException
+    {
+        boolean ret = false;
+        if (InstanceUtils.isType(promotInst, CIPromo.Promotion)) {
+            ret = true;
+            final var eval = EQL.builder().print().query(CIPromo.ProductsEQLCondition)
+                            .where()
+                            .attribute(CIPromo.ProductsEQLCondition.PromotionLink)
+                            .eq(promotInst)
+                            .select()
+                            .attribute(CIPromo.ProductsEQLCondition.OID)
+                            .evaluate();
+            while (eval.next()) {
+                final var eqlEval = EQL.builder().print().query(CIPromo.EQLAbstract)
+                    .where()
+                    .attribute(CIPromo.EQLAbstract.ConditionLink)
+                    .eq(eval.inst())
+                    .select()
+                    .attribute(CIPromo.EQLAbstract.OID)
+                    .evaluate();
+                if (!eqlEval.next()) {
+                    ret = false;
+                }
+            }
+        }
+        LOG.warn("Setting to active not allowed");
+        return ret;
+    }
+
 }

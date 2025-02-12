@@ -43,6 +43,12 @@
             <property name="Attribute">Quantity</property>
             <property name="Required">true</property>
         </field>
+        <field name="logicalOperator">
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="Attribute">LogicalOperator</property>
+            <property name="Required">true</property>
+        </field>
         <field name="note">
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>

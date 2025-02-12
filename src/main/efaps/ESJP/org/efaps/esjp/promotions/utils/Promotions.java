@@ -132,7 +132,19 @@ public class Promotions
     public enum ActionStrategy implements IEnum
     {
 
-        CHEAPEST, PRICIEST;
+        CHEAPEST, PRICIEST, INDEX;
+
+        @Override
+        public int getInt()
+        {
+            return ordinal();
+        }
+    }
+
+    public enum LogicalOperator implements IEnum
+    {
+
+        AND, OR;
 
         @Override
         public int getInt()

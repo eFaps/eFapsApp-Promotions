@@ -26,7 +26,11 @@
         <name>Promo_PromotionTree_Menu_Action</name>
         <childs>
             <child>Promo_PromotionTree_Menu_Action_Edit</child>
+            <child>Promo_PromotionTree_Menu_Action_SetActive</child>
+            <child>Promo_PromotionTree_Menu_Action_SetInactive</child>
+            <child>Promo_PromotionTree_Menu_Action_SetDraft</child>
             <child>Promo_PromotionTree_Menu_Action_DownloadJson</child>
+            <child>ERP_DocumentAbstractTree_Action_EditStatus</child>
         </childs>
     </definition>
 </ui-menu>

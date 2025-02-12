@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.efaps.admin.datamodel.Type;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.event.Return;
@@ -54,6 +55,7 @@ import org.efaps.esjp.promotions.rest.modules.PromotionHeadDto;
 import org.efaps.esjp.promotions.utils.Promotions;
 import org.efaps.esjp.promotions.utils.Promotions.ConditionContainer;
 import org.efaps.esjp.promotions.utils.Promotions.EntryOperator;
+import org.efaps.esjp.promotions.utils.Promotions.LogicalOperator;
 import org.efaps.esjp.ui.util.ValueUtils;
 import org.efaps.promotionengine.action.FixedAmountAction;
 import org.efaps.promotionengine.action.PercentageDiscountAction;
@@ -103,15 +105,27 @@ public class PromotionService
     {
         LOG.info("Clean cache");
         getCache().put(evalCacheKey(CACHEPREFIX_CLEAN), "true");
+
+        for (final var key: getCache().keySet()) {
+            if (key.contains(".")) {
+                getCache().remove(key);
+            }
+        }
         return new Return();
     }
 
     public Promotion getPromotion(final Instance promotionInstance)
         throws EFapsException
     {
-        final Print print = EQL.builder().print(promotionInstance);
-        final var promotions = evalPromotions(print);
-        return promotions.isEmpty() ? null : promotions.get(0);
+        List<Promotion> promotions = null;
+        if (getCache().containsKey(promotionInstance.getOid())) {
+            promotions = loadPromotions(promotionInstance.getOid());
+        } else {
+            final Print print = EQL.builder().print(promotionInstance);
+            promotions = evalPromotions(print);
+            cachePromotions(promotions, promotionInstance.getOid(), 10, TimeUnit.MINUTES);
+        }
+        return promotions == null ? null : promotions.isEmpty() ? null : promotions.get(0);
     }
 
     public List<PromotionHeadDto> getPromotionHeads()
@@ -153,7 +167,7 @@ public class PromotionService
                             .eq(CIPromo.PromotionStatus.Active)
                             .select();
             promotions = evalPromotions(promoEval);
-            cachePromotions(promotions);
+            cachePromotions(promotions, evalCacheKey(CACHEPREFIX));
             getCache().remove(evalCacheKey(CACHEPREFIX_LOADING));
         }
         return promotions;
@@ -218,7 +232,7 @@ public class PromotionService
                                final Promotion.Builder promotionBldr)
         throws EFapsException
     {
-        LOG.info("Evaluation Conditions");
+        LOG.info("Evaluating Conditions for: {}", promoInst.getOid());
         final var eval = EQL.builder().print().query(CIPromo.ConditionAbstract)
                         .where()
                         .attribute(CIPromo.ConditionAbstract.PromotionLink).eq(promoInst)
@@ -531,7 +545,12 @@ public class PromotionService
     public static Set<String> evalProductOids4EQL(final Instance conditionInstance)
         throws EFapsException
     {
-        LOG.info("Evaluation ProductOid for EQL {}", conditionInstance.getOid());
+        LOG.info("Evaluating ProductOids for EQL: {}", conditionInstance.getOid());
+        final var condEval = EQL.builder().print(conditionInstance)
+                        .attribute(CIPromo.ProductsEQLCondition.LogicalOperator)
+                        .evaluate();
+        final var operator = condEval.<LogicalOperator>get(CIPromo.ProductsEQLCondition.LogicalOperator);
+
         final var prodOids = new HashSet<String>();
         final var properties = Promotions.EQL_ATTRDEF.get();
         final var types = PropertiesUtil.analyseProperty(properties, "Type", 0);
@@ -546,36 +565,42 @@ public class PromotionService
                         .attribute(CIPromo.EQLAttributeDefinition.AttributeDefinitionType,
                                         CIPromo.EQLAttributeDefinition.AttributeDefinitionValue)
                         .evaluate();
-        final var wheres = new HashMap<String, Long>();
+        final var wheres = new ArrayList<Pair<String, Long>>();
+
         while (eqlEval.next()) {
             final Long typeId = eqlEval.get(CIPromo.EQLAttributeDefinition.AttributeDefinitionType);
             final Long valueId = eqlEval.get(CIPromo.EQLAttributeDefinition.AttributeDefinitionValue);
             final var type = Type.get(typeId);
-            LOG.info("  checking for type: {}", type);
-            final var keyOpt = types
-                            .entrySet()
-                            .stream()
-                            .filter(entry -> entry.getValue().equals(type.getName())
-                                            || entry.getValue().equals(type.getUUID().toString()))
-                            .map(Map.Entry::getKey)
-                            .findFirst();
-            if (keyOpt.isPresent()) {
-                wheres.put(selects.get(keyOpt.get()), valueId);
+            if (type != null) {
+                LOG.info("  checking for type: {} with value: {}", type.getName(), valueId);
+                final var keyOpt = types
+                                .entrySet()
+                                .stream()
+                                .filter(entry -> entry.getValue().equals(type.getName())
+                                                || entry.getValue().equals(type.getUUID().toString()))
+                                .map(Map.Entry::getKey)
+                                .findFirst();
+                if (keyOpt.isPresent()) {
+                    wheres.add(Pair.of(selects.get(keyOpt.get()), valueId));
+                }
             }
         }
+        LOG.info("  wheres: {}", wheres);
         final var bldr = new StringBuilder().append("print query type ")
                         .append(CIProducts.ProductAbstract.getType().getName());
 
         if (!wheres.isEmpty()) {
             bldr.append(" where ");
             boolean first = true;
-            for (final var oneWhere : wheres.entrySet()) {
+            for (final var oneWhere : wheres) {
                 if (first) {
                     first = false;
+                } else if (LogicalOperator.OR.equals(operator)) {
+                    bldr.append(" or ");
                 } else {
                     bldr.append(" and ");
                 }
-                bldr.append(oneWhere.getKey()).append(" eq ").append(oneWhere.getValue());
+                bldr.append(oneWhere.getLeft()).append(" eq ").append(oneWhere.getRight());
             }
         }
         bldr.append(" select oid");
@@ -591,7 +616,7 @@ public class PromotionService
     private List<Promotion> retrievePromotions()
         throws CacheReloadException, EFapsException
     {
-        List<Promotion> ret = null;
+
         final var clean = getCache().containsKey(evalCacheKey(CACHEPREFIX_CLEAN));
         final var loading = getCache().containsKey(evalCacheKey(CACHEPREFIX_LOADING));
         final var cacheKey = evalCacheKey(CACHEPREFIX);
@@ -600,7 +625,11 @@ public class PromotionService
             getCache().remove(evalCacheKey(CACHEPREFIX_CLEAN));
             return null;
         }
+        return loadPromotions(cacheKey);
+    }
 
+    private List<Promotion> loadPromotions(final String cacheKey) {
+        List<Promotion> ret = null;
         final var json = getCache().get(cacheKey);
         if (json != null) {
             try {
@@ -614,14 +643,27 @@ public class PromotionService
         return ret;
     }
 
-    private void cachePromotions(final List<Promotion> promotions)
+    private void cachePromotions(final List<Promotion> promotions,
+                                 final String cacheKey)
+        throws CacheReloadException, EFapsException
+    {
+        cachePromotions(promotions, cacheKey, 0, null);
+    }
+
+    private void cachePromotions(final List<Promotion> promotions,
+                                 final String cacheKey,
+                                 long lifespan,
+                                 TimeUnit unit)
         throws CacheReloadException, EFapsException
     {
         try {
             final var json = ValueUtils.getObjectMapper().writeValueAsString(promotions);
-            final var cacheKey = evalCacheKey(CACHEPREFIX);
             LOG.info("Caching Promotions for {}", cacheKey);
-            getCache().put(cacheKey, json);
+            if (unit != null) {
+                getCache().put(cacheKey, json, lifespan, unit);
+            } else {
+                getCache().put(cacheKey, json);
+            }
         } catch (final JsonProcessingException e) {
             LOG.error("Catched", e);
         }
