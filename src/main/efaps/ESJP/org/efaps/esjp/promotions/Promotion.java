@@ -99,8 +99,10 @@ public class Promotion
                     ret = false;
                 }
             }
+            if (!ret) {
+                LOG.warn("Setting to active not allowed for: {}", promotInst.getOid());
+            }
         }
-        LOG.warn("Setting to active not allowed");
         return ret;
     }
 
