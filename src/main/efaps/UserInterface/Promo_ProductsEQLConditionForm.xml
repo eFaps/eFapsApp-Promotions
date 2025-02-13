@@ -25,6 +25,11 @@
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Promo_ProductsEQLConditionForm</name>
+        <field name="note">
+            <property name="ModeCreate">EDITABLE</property>
+            <property name="ModeEdit">EDITABLE</property>
+            <property name="Attribute">Note</property>
+        </field>
         <field name="conditionContainer">
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
@@ -49,10 +54,11 @@
             <property name="Attribute">LogicalOperator</property>
             <property name="Required">true</property>
         </field>
-        <field name="note">
+        <field name="allowTargetSameAsSource">
             <property name="ModeCreate">EDITABLE</property>
             <property name="ModeEdit">EDITABLE</property>
-            <property name="Attribute">Note</property>
+            <property name="Attribute">AllowTargetSameAsSource</property>
+            <property name="Required">true</property>
         </field>
         <field character="Group" name="createGroup">
             <property name="GroupCount">2</property>
