@@ -620,7 +620,7 @@ public class PromotionService
         final var clean = getCache().containsKey(evalCacheKey(CACHEPREFIX_CLEAN));
         final var loading = getCache().containsKey(evalCacheKey(CACHEPREFIX_LOADING));
         final var cacheKey = evalCacheKey(CACHEPREFIX);
-        LOG.info("Retreiving Promotions for {}, clean {}, loading {}", cacheKey, clean, loading);
+        LOG.info("Retreiving Promotions for: {}, cleanRequired: {}, isLoading: {}", cacheKey, clean, loading);
         if (clean && !loading) {
             getCache().remove(evalCacheKey(CACHEPREFIX_CLEAN));
             return null;
@@ -639,7 +639,7 @@ public class PromotionService
                 LOG.error("Catched", e);
             }
         }
-        LOG.info("... found {} promotions", ret == null ? 0 : ret.size());
+        LOG.info("... found {} promotions for: {}", ret == null ? 0 : ret.size(), cacheKey);
         return ret;
     }
 
