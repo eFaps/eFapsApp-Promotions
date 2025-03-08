@@ -495,37 +495,31 @@ public class PromotionService
                                 .orderBy(CISales.PositionAbstract.PositionNumber)
                                 .attribute(CISales.PositionAbstract.PositionNumber)
                                 .evaluate();
-                int idx = 0;
                 while (posEval.next()) {
-                    if (dto.getDetails().size() > idx) {
-                        final var detail = dto.getDetails().get(idx);
-                        for (final var promotionOid : detail.getPromotionOids()) {
-                            final var promoInst = Instance.get(promotionOid);
-                            final String promotion;
-                            if (oid2promotion.containsKey(promotionOid)) {
-                                promotion = objectMapper.writeValueAsString(oid2promotion.get(promotionOid));
-                            } else {
-                                promotion = promotions.stream().collect(Collectors.joining("\n"));
-                            }
-                            if (InstanceUtils.isKindOf(promoInst, CIPromo.PromotionAbstract)) {
-                                EQL.builder().insert(ciRelPosType)
-                                                .set(CIPromo.Promotion2PositionAbstract.FromLink, promoInst)
-                                                .set(CIPromo.Promotion2PositionAbstract.ToLinkAbstract, posEval.inst())
-                                                .set(CIPromo.Promotion2PositionAbstract.PromoInfo, promoInfo)
-                                                .set(CIPromo.Promotion2PositionAbstract.Promotion, promotion)
-                                                .set(CIPromo.Promotion2PositionAbstract.NetUnitDiscount,
-                                                                detail.getNetUnitDiscount())
-                                                .set(CIPromo.Promotion2PositionAbstract.NetDiscount,
-                                                                detail.getNetDiscount())
-                                                .set(CIPromo.Promotion2PositionAbstract.CrossUnitDiscount,
-                                                                detail.getCrossUnitDiscount())
-                                                .set(CIPromo.Promotion2PositionAbstract.CrossDiscount,
-                                                                detail.getCrossDiscount())
-                                                .execute();
-                            }
+                    final int posIndex = posEval.get(CISales.PositionAbstract.PositionNumber);
+                    for (final var detail : dto.findDetailsForPosition(posIndex)) {
+                        final var promoInst = Instance.get(detail.getPromotionOid());
+                        String promotion = null;
+                        if (oid2promotion.containsKey(promoInst.getOid())) {
+                            promotion = objectMapper.writeValueAsString(oid2promotion.get(promoInst.getOid()));
+                        }
+                        if (InstanceUtils.isKindOf(promoInst, CIPromo.PromotionAbstract)) {
+                            EQL.builder().insert(ciRelPosType)
+                                            .set(CIPromo.Promotion2PositionAbstract.FromLink, promoInst)
+                                            .set(CIPromo.Promotion2PositionAbstract.ToLinkAbstract, posEval.inst())
+                                            .set(CIPromo.Promotion2PositionAbstract.PromoInfo, promoInfo)
+                                            .set(CIPromo.Promotion2PositionAbstract.Promotion, promotion)
+                                            .set(CIPromo.Promotion2PositionAbstract.NetUnitDiscount,
+                                                            detail.getNetUnitDiscount())
+                                            .set(CIPromo.Promotion2PositionAbstract.NetDiscount,
+                                                            detail.getNetDiscount())
+                                            .set(CIPromo.Promotion2PositionAbstract.CrossUnitDiscount,
+                                                            detail.getCrossUnitDiscount())
+                                            .set(CIPromo.Promotion2PositionAbstract.CrossDiscount,
+                                                            detail.getCrossDiscount())
+                                            .execute();
                         }
                     }
-                    idx++;
                 }
             } catch (final JsonProcessingException e) {
                 LOG.error("Catched", e);

@@ -19,7 +19,7 @@
 <ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>f4e289db-5146-472d-9e7d-fe99d3a9263a</uuid>
-    <file-application>eFapsApp-Sales</file-application>
+    <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Promo_PromotionTree_Menu_Action_SetDraft</name>
