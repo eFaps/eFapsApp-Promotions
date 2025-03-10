@@ -15,27 +15,32 @@
  */
 package org.efaps.esjp.promotions.rest.modules;
 
+import java.math.BigDecimal;
+
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 
 @JsonDeserialize(builder = SimulatorProductDto.Builder.class)
 @EFapsUUID("154be90a-a7e5-4735-a949-c0350ee8037f")
 @EFapsApplication("eFapsApp-Promotions")
 public class SimulatorProductDto
 {
+
     private final String oid;
     private final String name;
     private final String description;
+    private final BigDecimal netUnitPrice;
 
     private SimulatorProductDto(Builder builder)
     {
         this.oid = builder.oid;
         this.name = builder.name;
         this.description = builder.description;
+        this.netUnitPrice = builder.netUnitPrice;
     }
+
     public String getOid()
     {
         return oid;
@@ -51,16 +56,23 @@ public class SimulatorProductDto
         return description;
     }
 
+    public BigDecimal getNetUnitPrice()
+    {
+        return netUnitPrice;
+    }
+
     public static Builder builder()
     {
         return new Builder();
     }
+
     public static final class Builder
     {
 
         private String oid;
         private String name;
         private String description;
+        private BigDecimal netUnitPrice;
 
         private Builder()
         {
@@ -81,6 +93,12 @@ public class SimulatorProductDto
         public Builder withDescription(String description)
         {
             this.description = description;
+            return this;
+        }
+
+        public Builder withNetUnitPrice(BigDecimal netUnitPrice)
+        {
+            this.netUnitPrice = netUnitPrice;
             return this;
         }
 

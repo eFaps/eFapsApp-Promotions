@@ -86,10 +86,15 @@ public class SimulatorController
                         .limit(100)
                         .evaluate();
         while (productEval.next()) {
+            final Parameter parameter = ParameterUtil.instance();
+            final var prodPrice = new PriceUtil().getPrice(parameter, DateTime.now(), productEval.inst(),
+                            CIProducts.ProductPricelistRetail.uuid, "DefaultPosition", false);
+
             dtos.add(SimulatorProductDto.builder()
                             .withOid(productEval.inst().getOid())
                             .withName(productEval.get(CIProducts.ProductStandart.Name))
                             .withDescription(productEval.get(CIProducts.ProductStandart.Description))
+                            .withNetUnitPrice(prodPrice.getCurrentPrice())
                             .build());
         }
         return Response.ok(dtos).build();
@@ -126,8 +131,6 @@ public class SimulatorController
         final Parameter parameter = ParameterUtil.instance();
         final var taxMap = new HashMap<String, Tax>();
         final var document = new Document();
-        int idx = 0;
-
         // for price just use midday
         DateTime jodaDateTime;
         if (dto.getDate() != null) {
@@ -141,6 +144,7 @@ public class SimulatorController
 
             final var prodPrice = new PriceUtil().getPrice(parameter, jodaDateTime, prodInst,
                             CIProducts.ProductPricelistRetail.uuid, "DefaultPosition", false);
+
 
             final var prodEval = EQL.builder()
                             .print(prodInst)
@@ -167,9 +171,9 @@ public class SimulatorController
                             .toList();
 
             document.addPosition(new Position()
+                            .setIndex(pos.getIndex())
                             .setNetUnitPrice(prodPrice.getCurrentPrice())
                             .setTaxes(taxes)
-                            .setIndex(idx++)
                             .setProductOid(pos.getProductOid())
                             .setQuantity(pos.getQuantity()));
         }
@@ -177,6 +181,18 @@ public class SimulatorController
         LOG.info("result: {}", result);
 
         return Response.ok(result).build();
+    }
+
+    protected BigDecimal evalNetUnitPrice(final Instance prodInst,
+                                          final DateTime jodaDateTime)
+        throws EFapsException
+    {
+        final Parameter parameter = ParameterUtil.instance();
+
+        final var prodPrice = new PriceUtil().getPrice(parameter, jodaDateTime, prodInst,
+                        CIProducts.ProductPricelistRetail.uuid, "DefaultPosition", false);
+
+        return prodPrice.getCurrentPrice();
     }
 
     public IDocument calculate(final IDocument document,
