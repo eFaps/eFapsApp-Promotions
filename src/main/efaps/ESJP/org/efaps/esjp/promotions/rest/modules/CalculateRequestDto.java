@@ -37,11 +37,14 @@ public class CalculateRequestDto
 
     private final List<String> promotionOids;
 
+    private final String posBackendOid;
+
     private CalculateRequestDto(Builder builder)
     {
         this.items = builder.items;
         this.date = builder.date;
         this.promotionOids = builder.promotionOids;
+        this.posBackendOid = builder.posBackendOid;
     }
 
     public List<CalculateRequestPositionDto> getItems()
@@ -57,6 +60,11 @@ public class CalculateRequestDto
     public List<String> getPromotionOids()
     {
         return promotionOids;
+    }
+
+    public String getPosBackendOid()
+    {
+        return posBackendOid;
     }
 
     @Override
@@ -75,7 +83,8 @@ public class CalculateRequestDto
 
         private List<CalculateRequestPositionDto> items = Collections.emptyList();
         private LocalDate date;
-        private List<String> promotionOids;
+        private List<String> promotionOids = Collections.emptyList();
+        private String posBackendOid;
 
         private Builder()
         {
@@ -93,9 +102,15 @@ public class CalculateRequestDto
             return this;
         }
 
-        public Builder withPromotionOids(final List<String> promotionOids)
+        public Builder withPromotionOids(List<String> promotionOids)
         {
             this.promotionOids = promotionOids;
+            return this;
+        }
+
+        public Builder withPosBackendOid(String posBackendOid)
+        {
+            this.posBackendOid = posBackendOid;
             return this;
         }
 

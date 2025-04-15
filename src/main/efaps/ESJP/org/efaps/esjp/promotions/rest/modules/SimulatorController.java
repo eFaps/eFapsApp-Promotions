@@ -21,6 +21,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.efaps.abacus.api.IConfig;
@@ -31,6 +32,7 @@ import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
 import org.efaps.eql.EQL;
+import org.efaps.esjp.ci.CIPOS;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.common.parameter.ParameterUtil;
 import org.efaps.esjp.promotions.PromotionService;
@@ -41,6 +43,7 @@ import org.efaps.esjp.sales.tax.Tax;
 import org.efaps.esjp.sales.tax.TaxCat_Base;
 import org.efaps.promotionengine.PromotionsConfiguration;
 import org.efaps.promotionengine.api.IDocument;
+import org.efaps.promotionengine.condition.StoreCondition;
 import org.efaps.promotionengine.pojo.Document;
 import org.efaps.promotionengine.pojo.Position;
 import org.efaps.promotionengine.process.EngineRule;
@@ -120,6 +123,34 @@ public class SimulatorController
         return Response.ok(promotion).build();
     }
 
+    @Path("/pos-backends")
+    @GET
+    @Produces({ MediaType.APPLICATION_JSON })
+    public Response getPOSBackends()
+        throws EFapsException
+    {
+        if (Promotions.STORECOND_ACTIVATE.get()) {
+            final var dtos = new ArrayList<SimulatorPOSBackendDto>();
+            final var eval = EQL.builder().print().query(CIPOS.BackendAbstract)
+                            .where().attribute(CIPOS.BackendAbstract.StatusAbstract).eq(CIPOS.BackendStatus.Active)
+                            .select()
+                            .attribute(CIPOS.BackendAbstract.Name, CIPOS.BackendAbstract.Description,
+                                            CIPOS.BackendAbstract.Identifier)
+                            .evaluate();
+            while (eval.next()) {
+                dtos.add(SimulatorPOSBackendDto.builder()
+                                .withOid(eval.inst().getOid())
+                                .withName(eval.get(CIPOS.BackendAbstract.Name))
+                                .withIdentifier(eval.get(CIPOS.BackendAbstract.Identifier))
+                                .withDescription(eval.get(CIPOS.BackendAbstract.Description))
+                                .build());
+            }
+            return Response.ok(dtos).build();
+        } else {
+            return Response.ok().build();
+        }
+    }
+
     @Path("/calculate")
     @POST
     @Produces({ MediaType.APPLICATION_JSON })
@@ -144,7 +175,6 @@ public class SimulatorController
 
             final var prodPrice = new PriceUtil().getPrice(parameter, jodaDateTime, prodInst,
                             CIProducts.ProductPricelistRetail.uuid, "DefaultPosition", false);
-
 
             final var prodEval = EQL.builder()
                             .print(prodInst)
@@ -177,7 +207,7 @@ public class SimulatorController
                             .setProductOid(pos.getProductOid())
                             .setQuantity(pos.getQuantity()));
         }
-        final var result = calculate(document, dto.getDate(), dto.getPromotionOids());
+        final var result = calculate(document, dto.getDate(), dto.getPromotionOids(), dto.getPosBackendOid());
         LOG.info("result: {}", result);
 
         return Response.ok(result).build();
@@ -197,7 +227,8 @@ public class SimulatorController
 
     public IDocument calculate(final IDocument document,
                                final LocalDate localDate,
-                               final List<String> promotionOids)
+                               final List<String> promotionOids,
+                               final String posBackendOid)
         throws EFapsException
     {
         final var calculator = new org.efaps.promotionengine.Calculator(getConfig());
@@ -222,8 +253,24 @@ public class SimulatorController
         promoConfig.setEngineRule(EngineRule.valueOf(rule));
         LOG.info("Calculating with EngineRule: {} - DateTime: {}", promoConfig.getEngineRule(),
                         promoConfig.getEvaluationDateTime());
-        calculator.calc(document, promotions, null, promoConfig);
+        calculator.calc(document, promotions, evalData(posBackendOid), promoConfig);
         return document;
+    }
+
+    protected Map<String, Object> evalData(final String posBackendOid)
+        throws EFapsException
+    {
+        final Map<String, Object> map = new HashMap<>();
+        if (posBackendOid != null) {
+            final var posBackendEval = EQL.builder().print(posBackendOid)
+                            .attribute(CIPOS.BackendAbstract.Identifier)
+                            .evaluate();
+
+            if (posBackendEval.next()) {
+                map.put(StoreCondition.KEY, posBackendEval.get(CIPOS.BackendAbstract.Identifier));
+            }
+        }
+        return map;
     }
 
     protected IConfig getConfig()

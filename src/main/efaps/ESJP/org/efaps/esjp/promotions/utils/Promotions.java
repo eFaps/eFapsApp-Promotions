@@ -75,6 +75,12 @@ public class Promotions
                     .key(Promotions.BASE + "StackCondition.Activate")
                     .description("Activate StackCondition.");
 
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute STORECOND_ACTIVATE = new BooleanSysConfAttribute()
+                    .sysConfUUID(Promotions.SYSCONFUUID)
+                    .key(Promotions.BASE + "StoreCondition.Activate")
+                    .description("Activate StoreConditions.");
+
     public enum ConditionContainer implements IEnum
     {
 

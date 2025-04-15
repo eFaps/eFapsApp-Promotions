@@ -19,6 +19,8 @@ import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsNoUpdate;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.ci.CIAttribute;
+import org.efaps.ci.CIStatus;
+import org.efaps.ci.CIType;
 
 @EFapsUUID("9fd82515-9574-402e-9dab-b6e3f3d88264")
 @EFapsApplication("eFapsApp-Promotions")
@@ -53,6 +55,38 @@ public final class CIPOS
         }
 
         public final CIAttribute Status = new CIAttribute(this, "Status");
+    }
+
+    public static final _BackendAbstract BackendAbstract = new _BackendAbstract("50989bcb-729c-4836-87d9-9a53086c1def");
+
+    public static class _BackendAbstract
+        extends CIType
+    {
+
+        protected _BackendAbstract(final String _uuid)
+        {
+            super(_uuid);
+        }
+
+        public final CIAttribute Description = new CIAttribute(this, "Description");
+        public final CIAttribute Identifier = new CIAttribute(this, "Identifier");
+        public final CIAttribute Name = new CIAttribute(this, "Name");
+        public final CIAttribute StatusAbstract = new CIAttribute(this, "StatusAbstract");
+    }
+
+    public static final _BackendStatus BackendStatus = new _BackendStatus("82dc0adc-2957-4eb3-866c-c353e35aed32");
+
+    public static class _BackendStatus
+        extends org.efaps.esjp.ci.CIAdmin._DataModel_StatusAbstract
+    {
+
+        protected _BackendStatus(final String _uuid)
+        {
+            super(_uuid);
+        }
+
+        public final CIStatus Active = new CIStatus(this, "Active");
+        public final CIStatus Inactive = new CIStatus(this, "Inactive");
     }
 
 }
