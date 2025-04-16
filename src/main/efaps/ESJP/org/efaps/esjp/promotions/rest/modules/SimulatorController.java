@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.efaps.abacus.api.IConfig;
 import org.efaps.abacus.api.ITax;
@@ -234,7 +235,7 @@ public class SimulatorController
         final var calculator = new org.efaps.promotionengine.Calculator(getConfig());
         final List<Promotion> promotions;
         final var promotionService = new PromotionService();
-        if (promotionOids != null) {
+        if (CollectionUtils.isNotEmpty(promotionOids)) {
             promotions = new ArrayList<>();
             for (final var promotionOid : promotionOids) {
                 promotions.add(promotionService.getPromotion(Instance.get(promotionOid)));
