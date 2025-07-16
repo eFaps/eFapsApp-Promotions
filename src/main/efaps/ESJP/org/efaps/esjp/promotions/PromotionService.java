@@ -60,6 +60,7 @@ import org.efaps.esjp.ui.util.ValueUtils;
 import org.efaps.promotionengine.action.FixedAmountAction;
 import org.efaps.promotionengine.action.PercentageDiscountAction;
 import org.efaps.promotionengine.action.Strategy;
+import org.efaps.promotionengine.api.IPromotionsProvider;
 import org.efaps.promotionengine.condition.DateCondition;
 import org.efaps.promotionengine.condition.DocTotalCondition;
 import org.efaps.promotionengine.condition.ICondition;
@@ -90,6 +91,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 @EFapsUUID("26c36418-2e96-4d89-87c4-ad3740bba939")
 @EFapsApplication("eFapsApp-Promotions")
 public class PromotionService
+    implements IPromotionsProvider
 {
 
     private static final Logger LOG = LoggerFactory.getLogger(PromotionService.class);
@@ -106,7 +108,7 @@ public class PromotionService
         LOG.info("Clean cache");
         getCache().put(evalCacheKey(CACHEPREFIX_CLEAN), "true");
 
-        for (final var key: getCache().keySet()) {
+        for (final var key : getCache().keySet()) {
             if (key.contains(".")) {
                 getCache().remove(key);
             }
@@ -153,6 +155,7 @@ public class PromotionService
         return ret;
     }
 
+    @Override
     public List<Promotion> getPromotions()
         throws EFapsException
     {
@@ -622,7 +625,8 @@ public class PromotionService
         return loadPromotions(cacheKey);
     }
 
-    private List<Promotion> loadPromotions(final String cacheKey) {
+    private List<Promotion> loadPromotions(final String cacheKey)
+    {
         List<Promotion> ret = null;
         final var json = getCache().get(cacheKey);
         if (json != null) {
