@@ -18,7 +18,7 @@
 <ui-module xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>c4add1f5-e660-47d7-9563-3a86bb9b5efe</uuid>
-    <file-application>eFaps-WebApp</file-application>
+    <file-application>eFaps-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Promo_ProductsConditionTree_Products_CSVImportModule</name>

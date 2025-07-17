@@ -18,7 +18,7 @@
 <ui-module xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
     <uuid>bac97f65-af8d-416c-9166-6e78cbdae6c5</uuid>
-    <file-application>eFaps-WebApp</file-application>
+    <file-application>eFaps-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
         <name>Promo_SimulatorModule</name>
