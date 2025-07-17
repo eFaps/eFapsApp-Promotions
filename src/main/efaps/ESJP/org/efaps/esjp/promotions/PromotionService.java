@@ -90,8 +90,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @EFapsUUID("26c36418-2e96-4d89-87c4-ad3740bba939")
 @EFapsApplication("eFapsApp-Promotions")
-public class PromotionService
-    implements IPromotionsProvider
+public class PromotionService implements IPromotionsProvider
 {
 
     private static final Logger LOG = LoggerFactory.getLogger(PromotionService.class);
