@@ -21,6 +21,7 @@ import java.time.LocalTime;
 import java.time.OffsetTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -76,6 +77,7 @@ import org.efaps.promotionengine.condition.StoreCondition;
 import org.efaps.promotionengine.condition.TimeCondition;
 import org.efaps.promotionengine.dto.PromotionInfoDto;
 import org.efaps.promotionengine.promotion.Promotion;
+import org.efaps.util.EFapsBaseException;
 import org.efaps.util.EFapsException;
 import org.efaps.util.cache.CacheReloadException;
 import org.efaps.util.cache.InfinispanCache;
@@ -679,5 +681,13 @@ public class PromotionService implements IPromotionsProvider
             InfinispanCache.get().initCache(CACHENAME);
         }
         return InfinispanCache.get().<String, String>getCache(CACHENAME);
+    }
+
+    @Override
+    public void registerPromotionInfo(final PromotionInfoDto promotionInfoDto,
+                                      final String documentOid)
+        throws EFapsBaseException
+    {
+        registerPromotionInfoForDoc(documentOid, promotionInfoDto, Collections.emptyList());
     }
 }
