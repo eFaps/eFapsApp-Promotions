@@ -21,7 +21,6 @@ import java.time.LocalTime;
 import java.time.OffsetTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -92,7 +91,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @EFapsUUID("26c36418-2e96-4d89-87c4-ad3740bba939")
 @EFapsApplication("eFapsApp-Promotions")
-public class PromotionService implements IPromotionsProvider
+public class PromotionService
+    implements IPromotionsProvider
 {
 
     private static final Logger LOG = LoggerFactory.getLogger(PromotionService.class);
@@ -129,6 +129,16 @@ public class PromotionService implements IPromotionsProvider
             cachePromotions(promotions, promotionInstance.getOid(), 10, TimeUnit.MINUTES);
         }
         return promotions == null ? null : promotions.isEmpty() ? null : promotions.get(0);
+    }
+
+    public Promotion getPromotion(final String oid)
+    {
+        try {
+            return getPromotion(Instance.get(oid));
+        } catch (final EFapsException e) {
+            LOG.error("catched", e);
+        }
+        return null;
     }
 
     public List<PromotionHeadDto> getPromotionHeads()
@@ -461,12 +471,20 @@ public class PromotionService implements IPromotionsProvider
             try {
                 final var objectMapper = getObjectMapper();
                 final var oid2promotion = new HashMap<String, Promotion>();
-                for (final var promotionStr : promotions) {
-                    final var promotion = objectMapper.readValue(promotionStr, Promotion.class);
-                    LOG.info("Read promotion: {}", promotion);
-                    oid2promotion.put(promotion.getOid(), promotion);
+                if (promotions == null) {
+                    dto.getPromotionOids().forEach(promotionOid -> {
+                        final var promotion = getPromotion(promotionOid);
+                        if (promotion != null) {
+                            oid2promotion.put(promotion.getOid(), promotion);
+                        }
+                    });
+                } else {
+                    for (final var promotionStr : promotions) {
+                        final var promotion = objectMapper.readValue(promotionStr, Promotion.class);
+                        LOG.info("Read promotion: {}", promotion);
+                        oid2promotion.put(promotion.getOid(), promotion);
+                    }
                 }
-
                 final var promoInfo = objectMapper.writeValueAsString(dto);
 
                 for (final var promotionOid : dto.getPromotionOids()) {
@@ -688,6 +706,6 @@ public class PromotionService implements IPromotionsProvider
                                       final String documentOid)
         throws EFapsBaseException
     {
-        registerPromotionInfoForDoc(documentOid, promotionInfoDto, Collections.emptyList());
+        registerPromotionInfoForDoc(documentOid, promotionInfoDto, null);
     }
 }
