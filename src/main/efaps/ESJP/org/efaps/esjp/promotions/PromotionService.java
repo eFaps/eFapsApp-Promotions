@@ -50,6 +50,7 @@ import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.ci.CIPromo;
 import org.efaps.esjp.ci.CISales;
 import org.efaps.esjp.common.properties.PropertiesUtil;
+import org.efaps.esjp.common.serialization.SerializationUtil;
 import org.efaps.esjp.db.InstanceUtils;
 import org.efaps.esjp.promotions.rest.modules.PromotionHeadDto;
 import org.efaps.esjp.promotions.utils.Promotions;
@@ -85,9 +86,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @EFapsUUID("26c36418-2e96-4d89-87c4-ad3740bba939")
 @EFapsApplication("eFapsApp-Promotions")
@@ -469,7 +467,7 @@ public class PromotionService
         }
         if (ciRelDocType != null) {
             try {
-                final var objectMapper = getObjectMapper();
+                final var objectMapper = SerializationUtil.getObjectMapper();
                 final var oid2promotion = new HashMap<String, Promotion>();
                 if (promotions == null) {
                     dto.getPromotionOids().forEach(promotionOid -> {
@@ -548,14 +546,6 @@ public class PromotionService
             }
         }
         return ret;
-    }
-
-    protected ObjectMapper getObjectMapper()
-    {
-        final var mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        return mapper;
     }
 
     public static Set<String> evalProductOids4EQL(final Instance conditionInstance)
@@ -708,4 +698,30 @@ public class PromotionService
     {
         registerPromotionInfoForDoc(documentOid, promotionInfoDto, null);
     }
+
+    public PromotionInfoDto getPromotionInfoForDoc(final Instance documentInstance)
+        throws EFapsException
+    {
+        PromotionInfoDto ret = null;
+        final var promoEval = EQL.builder().print().query(CIPromo.Promotion2DocumentAbstract)
+                        .where()
+                        .attribute(CIPromo.Promotion2DocumentAbstract.ToLinkAbstract).eq(documentInstance)
+                        .select()
+                        .attribute(CIPromo.Promotion2DocumentAbstract.PromoInfo)
+                        .limit(1)
+                        .evaluate();
+        if (promoEval.next()) {
+            final var objectMapper = SerializationUtil.getObjectMapper();
+            final String promoInfoStr = promoEval.get(CIPromo.Promotion2DocumentAbstract.PromoInfo);
+            if (promoInfoStr != null) {
+                try {
+                    ret = objectMapper.readValue(promoInfoStr, PromotionInfoDto.class);
+                } catch (final JsonProcessingException e) {
+                    LOG.error("Catched", e);
+                }
+            }
+        }
+        return ret;
+    }
+
 }
