@@ -33,10 +33,13 @@ import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
 import org.efaps.eql.EQL;
+import org.efaps.eql2.StmtFlag;
 import org.efaps.esjp.ci.CIPOS;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.ci.CISales;
 import org.efaps.esjp.common.parameter.ParameterUtil;
+import org.efaps.esjp.db.InstanceUtils;
+import org.efaps.esjp.products.util.Products;
 import org.efaps.esjp.promotions.PromotionService;
 import org.efaps.esjp.promotions.utils.Promotions;
 import org.efaps.esjp.sales.CalculatorConfig;
@@ -173,7 +176,26 @@ public class SimulatorController
             jodaDateTime = DateTime.now();
         }
         for (final var pos : dto.getItems()) {
-            final var prodInst = Instance.get(pos.getProductOid());
+            var prodInst = Instance.get(pos.getProductOid());
+
+            if (Products.ACTIVATEINDIVIDUAL.get()) {
+                if (InstanceUtils.isType(prodInst, CIProducts.ProductBatch)
+                                || InstanceUtils.isType(prodInst, CIProducts.ProductIndividual)) {
+                    final var eval = EQL.builder()
+                                    .with(StmtFlag.REQCACHED)
+                                    .print(prodInst)
+                                    .linkfrom(CIProducts.StoreableProductAbstract2IndividualAbstract.ToAbstract)
+                                    .linkto(CIProducts.StoreableProductAbstract2IndividualAbstract.FromAbstract)
+                                    .instance().first().as("productInst")
+                                    .evaluate();
+                    if (eval.next()) {
+                        final Instance baseProductInst = eval.get("productInst");
+                        if (InstanceUtils.isValid(baseProductInst)) {
+                            prodInst = baseProductInst;
+                        }
+                    }
+                }
+            }
 
             final var prodPrice = new PriceUtil().getPrice(parameter, jodaDateTime, prodInst,
                             CIProducts.ProductPricelistRetail.uuid, "DefaultPosition", false);
@@ -206,7 +228,8 @@ public class SimulatorController
                             .setIndex(pos.getIndex())
                             .setNetUnitPrice(prodPrice.getCurrentPrice())
                             .setTaxes(taxes)
-                            .setProductOid(pos.getProductOid())
+                            .setProductOid(prodInst.getOid())
+                            .setStandInOid(pos.getProductOid().equals(prodInst.getOid())? null : pos.getProductOid())
                             .setQuantity(pos.getQuantity()));
         }
         final var result = calculate(document, dto.getDate(), dto.getPromotionOids(), dto.getPosBackendOid());

@@ -593,7 +593,9 @@ public class PromotionService
         }
         LOG.info("  wheres: {}", wheres);
         final var bldr = new StringBuilder().append("print query type ")
-                        .append(CIProducts.ProductAbstract.getType().getName());
+                        .append(CIProducts.ProductStandart.getType().getName()).append(", ")
+                        .append(CIProducts.ProductService.getType().getName()).append(", ")
+                        .append(CIProducts.ProductSalesPartList.getType().getName());
 
         if (!wheres.isEmpty()) {
             bldr.append(" where ");
@@ -609,7 +611,10 @@ public class PromotionService
                 bldr.append(oneWhere.getLeft()).append(" eq ").append(oneWhere.getRight());
             }
         }
-        bldr.append(" select oid");
+        if (!wheres.isEmpty()) {
+            bldr.append(" and ");
+        }
+        bldr.append(" Active == true select oid");
         LOG.info("  stmt: {}", bldr);
         final IPrintQueryStatement stmt = (IPrintQueryStatement) EQL.parse(bldr);
         final var eval = PrintStmt.get(stmt).evaluate();
