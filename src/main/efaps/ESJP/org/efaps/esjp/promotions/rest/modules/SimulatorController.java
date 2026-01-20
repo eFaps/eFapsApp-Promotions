@@ -31,6 +31,7 @@ import org.efaps.abacus.api.TaxType;
 import org.efaps.admin.event.Parameter;
 import org.efaps.admin.program.esjp.EFapsApplication;
 import org.efaps.admin.program.esjp.EFapsUUID;
+import org.efaps.db.Context;
 import org.efaps.db.Instance;
 import org.efaps.eql.EQL;
 import org.efaps.eql2.StmtFlag;
@@ -271,8 +272,11 @@ public class SimulatorController
         final var promoConfig = new PromotionsConfiguration();
         if (localDate != null) {
             promoConfig.setEvaluationDateTime(
-                            OffsetDateTime.now().withYear(localDate.getYear()).withMonth(localDate.getMonthValue())
-                                            .withDayOfMonth(localDate.getDayOfMonth()));
+                            OffsetDateTime.now(Context.getThreadContext().getZoneId())
+                                .withYear(localDate.getYear())
+                                .withMonth(localDate.getMonthValue())
+                                .withDayOfMonth(localDate.getDayOfMonth())
+                                .withHour(12));
         }
         final var rule = (String) Promotions.ENGINE_CONFIG.get().getOrDefault("EngineRule", "PRIORITY");
         promoConfig.setEngineRule(EngineRule.valueOf(rule));
