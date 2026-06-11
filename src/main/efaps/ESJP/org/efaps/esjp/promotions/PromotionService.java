@@ -57,7 +57,6 @@ import org.efaps.esjp.promotions.utils.Promotions;
 import org.efaps.esjp.promotions.utils.Promotions.ConditionContainer;
 import org.efaps.esjp.promotions.utils.Promotions.EntryOperator;
 import org.efaps.esjp.promotions.utils.Promotions.LogicalOperator;
-import org.efaps.esjp.ui.util.ValueUtils;
 import org.efaps.promotionengine.action.FixedAmountAction;
 import org.efaps.promotionengine.action.PercentageDiscountAction;
 import org.efaps.promotionengine.action.Strategy;
@@ -479,7 +478,7 @@ public class PromotionService
                 } else {
                     for (final var promotionStr : promotions) {
                         final var promotion = objectMapper.readValue(promotionStr, Promotion.class);
-                        LOG.info("Read promotion: {}", promotion);
+                        LOG.debug("Read promotion: {}", promotion);
                         oid2promotion.put(promotion.getOid(), promotion);
                     }
                 }
@@ -628,11 +627,11 @@ public class PromotionService
         throws CacheReloadException, EFapsException
     {
 
-        final var clean = getCache().containsKey(evalCacheKey(CACHEPREFIX_CLEAN));
+        final var cleanRequired = getCache().containsKey(evalCacheKey(CACHEPREFIX_CLEAN));
         final var loading = getCache().containsKey(evalCacheKey(CACHEPREFIX_LOADING));
         final var cacheKey = evalCacheKey(CACHEPREFIX);
-        LOG.info("Retreiving Promotions for: {}, cleanRequired: {}, isLoading: {}", cacheKey, clean, loading);
-        if (clean && !loading) {
+        LOG.info("Retreiving Promotions for: {}, cleanRequired: {}, isLoading: {}", cacheKey, cleanRequired, loading);
+        if (cleanRequired && !loading) {
             getCache().remove(evalCacheKey(CACHEPREFIX_CLEAN));
             return null;
         }
@@ -645,7 +644,8 @@ public class PromotionService
         final var json = getCache().get(cacheKey);
         if (json != null) {
             try {
-                ret = ValueUtils.getObjectMapper().readValue(json, ValueUtils.getObjectMapper().getTypeFactory()
+                final var objectMapper = SerializationUtil.getObjectMapper();
+                ret = objectMapper.readValue(json, objectMapper.getTypeFactory()
                                 .constructCollectionType(List.class, Promotion.class));
             } catch (final JsonProcessingException e) {
                 LOG.error("Catched", e);
@@ -669,7 +669,7 @@ public class PromotionService
         throws CacheReloadException, EFapsException
     {
         try {
-            final var json = ValueUtils.getObjectMapper().writeValueAsString(promotions);
+            final var json = SerializationUtil.getObjectMapper().writeValueAsString(promotions);
             LOG.info("Caching Promotions for {}", cacheKey);
             if (unit != null) {
                 getCache().put(cacheKey, json, lifespan, unit);
