@@ -97,6 +97,18 @@
             <defaultvalue>0</defaultvalue>
         </attribute>
         <attribute>
+            <name>String1</name>
+            <type>String</type>
+            <sqltable>Promo_ConditionsSQLTable</sqltable>
+            <sqlcolumn>STR1</sqlcolumn>
+        </attribute>
+         <attribute>
+            <name>VarChar1</name>
+            <type>String</type>
+            <sqltable>Promo_ConditionsSQLTable</sqltable>
+            <sqlcolumn>CLOB1</sqlcolumn>
+        </attribute>
+        <attribute>
             <name>Creator</name>
             <type>CreatorLink</type>
             <sqltable>Promo_ConditionsSQLTable</sqltable>

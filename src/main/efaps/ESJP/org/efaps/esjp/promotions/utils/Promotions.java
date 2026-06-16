@@ -81,6 +81,19 @@ public class Promotions
                     .key(Promotions.BASE + "StoreCondition.Activate")
                     .description("Activate StoreConditions.");
 
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute BINCOND_ACTIVATE = new BooleanSysConfAttribute()
+                    .sysConfUUID(Promotions.SYSCONFUUID)
+                    .key(Promotions.BASE + "BINCondition.Activate")
+                    .description("Activate BINConditions.");
+
+
+    @EFapsSysConfAttribute
+    public static final BooleanSysConfAttribute BINREGEXCOND_ACTIVATE = new BooleanSysConfAttribute()
+                    .sysConfUUID(Promotions.SYSCONFUUID)
+                    .key(Promotions.BASE + "BINRegexCondition.Activate")
+                    .description("Activate BINRegexConditions.");
+
     public enum ConditionContainer implements IEnum
     {
 

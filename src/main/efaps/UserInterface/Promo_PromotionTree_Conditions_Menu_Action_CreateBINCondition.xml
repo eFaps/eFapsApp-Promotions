@@ -16,27 +16,25 @@
     limitations under the License.
 
 -->
-
-<ui-command xmlns="http://www.efaps.org/xsd"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ui-command xmlns="http://www.efaps.org/xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.efaps.org/xsd http://www.efaps.org/xsd/eFaps_1.0.xsd">
-    <uuid>7d21b897-a853-4056-816c-7c7a40e4daee</uuid>
+    <uuid>ff9ec4ee-dad0-4255-9659-f3ab28b05da4</uuid>
     <file-application>eFapsApp-Promotions</file-application>
     <definition>
         <version-expression>(version==latest)</version-expression>
-        <name>Promo_PromotionTree_Conditions_Menu_Action_CreateStoreCondition</name>
+        <name>Promo_PromotionTree_Conditions_Menu_Action_CreateBINCondition</name>
         <target>
-            <form>Promo_StoreConditionForm</form>
-            <execute program="org.efaps.esjp.common.uiform.Create" />
+            <form>Promo_BINConditionForm</form>
+            <execute program="org.efaps.esjp.common.uiform.Create"/>
             <trigger event="UI_ACCESSCHECK" method="configCheck"
-                name="Promo_PromotionTree_Conditions_Menu_Action_CreateStoreCondition.UI_ACCESSCHECK"
+                name="Promo_PromotionTree_Conditions_Menu_Action_CreateBINCondition.UI_ACCESSCHECK"
                 program="org.efaps.esjp.admin.access.AccessCheck4UI">
                 <property name="SystemConfig">e3055a0d-6b3d-4d44-88df-a3042400260b</property>
-                <property name="Attribute">org.efaps.promotions.StoreCondition.Activate</property>
+                <property name="Attribute">org.efaps.promotions.BINCondition.Activate</property>
             </trigger>
         </target>
         <property name="Target">modal</property>
-        <property name="TargetCreateType">Promo_StoreCondition</property>
+        <property name="TargetCreateType">Promo_BINCondition</property>
         <property name="TargetConnectAttribute">Promo_ConditionAbstract/PromotionLink</property>
         <property name="TargetMode">create</property>
         <property name="TargetDefaultMenu">none</property>

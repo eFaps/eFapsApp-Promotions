@@ -36,6 +36,8 @@
             <column name="INT2"                         type="INTEGER"/>
             <column name="DEC1"                         type="DECIMAL" length="8" scale="4"/>
             <column name="BOOL1"                        type="BOOLEAN"/>
+            <column name="STR1"                         type="STRING_SHORT" length="128"/>
+            <column name="CLOB1"                        type="CLOB"/>
             <column name="CREATOR"      not-null="true" type="INTEGER"/>
             <column name="CREATED"      not-null="true" type="DATETIME"/>
             <column name="MODIFIER"     not-null="true" type="INTEGER"/>

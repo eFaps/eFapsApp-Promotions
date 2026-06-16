@@ -61,6 +61,8 @@ import org.efaps.promotionengine.action.FixedAmountAction;
 import org.efaps.promotionengine.action.PercentageDiscountAction;
 import org.efaps.promotionengine.action.Strategy;
 import org.efaps.promotionengine.api.IPromotionsProvider;
+import org.efaps.promotionengine.condition.BINCondition;
+import org.efaps.promotionengine.condition.BINRegexCondition;
 import org.efaps.promotionengine.condition.DateCondition;
 import org.efaps.promotionengine.condition.DocTotalCondition;
 import org.efaps.promotionengine.condition.ICondition;
@@ -250,7 +252,8 @@ public class PromotionService
                         .select()
                         .attribute(CIPromo.ConditionAbstract.ConditionContainer, CIPromo.ConditionAbstract.Note,
                                         CIPromo.ConditionAbstract.Int1, CIPromo.ConditionAbstract.Decimal1,
-                                        CIPromo.ConditionAbstract.Boolean1)
+                                        CIPromo.ConditionAbstract.Boolean1, CIPromo.ConditionAbstract.String1,
+                                        CIPromo.ConditionAbstract.VarChar1)
                         .evaluate();
         while (eval.next()) {
             final ICondition condition = evalCondition(eval);
@@ -437,6 +440,17 @@ public class PromotionService
                 final ICondition childCondition = evalCondition(childEval);
                 ((OrCondition) condition).addCondition(childCondition);
             }
+        } else if (InstanceUtils.isType(eval.inst(), CIPromo.BINCondition)) {
+            condition = new BINCondition()
+                            .setNote(eval.get(CIPromo.BINCondition.Note));
+            final String values = eval.get(CIPromo.ConditionAbstract.VarChar1);
+            for (final var value: values.split("\n")) {
+                ((BINCondition) condition).addIdentifier(value);
+            }
+        } else if (InstanceUtils.isType(eval.inst(), CIPromo.BINRegexCondition)) {
+            condition = new BINRegexCondition()
+                            .setRegex(eval.get(CIPromo.ConditionAbstract.String1))
+                            .setNote(eval.get(CIPromo.BINRegexCondition.Note));
         }
         return condition;
     }
