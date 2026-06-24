@@ -30,6 +30,7 @@ import org.efaps.admin.program.esjp.EFapsUUID;
 import org.efaps.db.Instance;
 import org.efaps.db.stmt.selection.Evaluator;
 import org.efaps.eql.EQL;
+import org.efaps.eql2.StmtFlag;
 import org.efaps.esjp.ci.CIProducts;
 import org.efaps.esjp.ci.CIPromo;
 import org.efaps.esjp.db.InstanceUtils;
@@ -145,7 +146,8 @@ public class ImportProductsFromCSV
             if (StringUtils.isNotEmpty(entry)) {
                 final Evaluator eval = getEvaluator(key, entry);
                 eval.next();
-                EQL.builder().insert(CIPromo.ProductsCondition2ProductAbstract)
+                EQL.builder().with(StmtFlag.EVENTOFF)
+                                .insert(CIPromo.ProductsCondition2ProductAbstract)
                                 .set(CIPromo.ProductsCondition2ProductAbstract.FromLink, conditionInst)
                                 .set(CIPromo.ProductsCondition2ProductAbstract.ToLink, eval.inst())
                                 .execute();
